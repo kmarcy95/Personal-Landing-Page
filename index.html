@@ -5,153 +5,244 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Keith — Links</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --blue: #3b82f6;
+    }
+
     body {
       min-height: 100vh;
-      background: #0a0a0a;
+      background: #060608;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Inter', sans-serif;
       color: #fff;
-      padding: 2rem 1rem;
+      padding: 2.5rem 1rem;
+      overflow-x: hidden;
     }
 
-    /* animated background grain */
-    body::before {
-      content: '';
+    /* animated mesh background */
+    .bg {
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(ellipse at 20% 50%, rgba(120, 60, 200, 0.15) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(200, 80, 120, 0.12) 0%, transparent 60%);
-      pointer-events: none;
       z-index: 0;
+      overflow: hidden;
+    }
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .bg-orb:nth-child(1) {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #7c3aed, transparent 70%);
+      top: -100px; left: -100px;
+      animation-duration: 14s;
+    }
+    .bg-orb:nth-child(2) {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #db2777, transparent 70%);
+      bottom: -80px; right: -80px;
+      animation-duration: 10s;
+      animation-direction: alternate-reverse;
+    }
+    .bg-orb:nth-child(3) {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, #2563eb, transparent 70%);
+      top: 50%; left: 60%;
+      animation-duration: 18s;
+    }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.08); }
     }
 
+    /* noise overlay */
+    .bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* card */
     .card {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
       text-align: center;
+      animation: fadeUp 0.6s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* avatar */
     .avatar-wrap {
       position: relative;
       display: inline-block;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
     }
-
-    .avatar {
-      width: 100px;
-      height: 100px;
+    .avatar-ring {
+      width: 108px;
+      height: 108px;
       border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid transparent;
-      background:
-        linear-gradient(#0a0a0a, #0a0a0a) padding-box,
-        linear-gradient(135deg, #a855f7, #ec4899) border-box;
-      /* placeholder gradient — replace src with your photo */
-      background-color: #1a1a2e;
+      padding: 3px;
+      background: linear-gradient(135deg, var(--purple), var(--pink), var(--blue));
+      animation: spin-ring 4s linear infinite;
+      background-size: 200% 200%;
+    }
+    @keyframes spin-ring {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a1035, #2d1b69);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
+      font-size: 3rem;
     }
-
-    .avatar-img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid transparent;
-      outline: 3px solid transparent;
-      box-shadow: 0 0 0 3px #a855f7;
-    }
-
-    .live-badge {
+    .live-pill {
       position: absolute;
-      bottom: 4px;
-      right: 4px;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
       background: #ef4444;
       color: #fff;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      padding: 2px 7px;
+      font-size: 0.58rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      padding: 3px 9px;
       border-radius: 999px;
-      border: 2px solid #0a0a0a;
+      border: 2px solid #060608;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse-dot 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
     }
 
+    /* name & tagline */
     h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #fff 40%, #a855f7);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 30%, #c084fc 70%, #f472b6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.35rem;
+      line-height: 1.1;
     }
-
     .tagline {
-      font-size: 0.9rem;
-      font-weight: 300;
-      color: #888;
-      margin-bottom: 2rem;
-      letter-spacing: 0.01em;
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: #6b7280;
+      margin-bottom: 2.25rem;
+      letter-spacing: 0.02em;
     }
 
-    /* link buttons */
+    /* buttons */
     .links {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
     .btn {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.6rem;
-      padding: 0.85rem 1.5rem;
-      border-radius: 14px;
-      font-size: 0.95rem;
+      gap: 0.65rem;
+      padding: 0.9rem 1.5rem;
+      border-radius: 16px;
+      font-size: 0.93rem;
       font-weight: 600;
       text-decoration: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-      border: 1px solid rgba(255,255,255,0.07);
-      backdrop-filter: blur(4px);
+      letter-spacing: 0.01em;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      overflow: hidden;
+      isolation: isolate;
     }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      opacity: 0.92;
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+      background: rgba(255,255,255,0.08);
     }
+    .btn:hover::before { opacity: 1; }
+    .btn:hover { transform: translateY(-3px); }
+    .btn:active { transform: translateY(-1px); }
 
-    .btn:active { transform: translateY(0); }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #a855f7, #ec4899);
+    .btn-chaturbate {
+      background: linear-gradient(135deg, #7c3aed, #db2777);
       color: #fff;
-      border-color: transparent;
-      box-shadow: 0 4px 20px rgba(168,85,247,0.35);
+      box-shadow: 0 4px 24px rgba(168,85,247,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 1rem 1.5rem;
+      border-radius: 18px;
+    }
+    .btn-chaturbate:hover {
+      box-shadow: 0 8px 32px rgba(168,85,247,0.55), inset 0 1px 0 rgba(255,255,255,0.15);
     }
 
-    .btn-dark {
-      background: rgba(255,255,255,0.05);
-      color: #ddd;
+    .btn-x {
+      background: rgba(255,255,255,0.04);
+      color: #e5e7eb;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
     }
+    .btn-x:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+
+    .btn-ig {
+      background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(236,72,153,0.15), rgba(168,85,247,0.15));
+      color: #e5e7eb;
+      border: 1px solid rgba(236,72,153,0.25);
+      backdrop-filter: blur(12px);
+    }
+    .btn-ig:hover { box-shadow: 0 6px 20px rgba(236,72,153,0.2); }
+
+    .btn-of {
+      background: rgba(255,255,255,0.04);
+      color: #e5e7eb;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+    }
+    .btn-of:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
 
     .btn-icon {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       line-height: 1;
+      flex-shrink: 0;
     }
 
     /* divider */
@@ -159,42 +250,51 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      margin: 0.5rem 0;
-      color: #444;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
+      margin: 0.3rem 0;
+      color: #374151;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
     .divider::before, .divider::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
     }
 
     /* footer */
     .footer {
       margin-top: 2rem;
-      font-size: 0.72rem;
-      color: #333;
+      font-size: 0.7rem;
+      color: #1f2937;
+      letter-spacing: 0.05em;
     }
+
+    /* staggered animation */
+    .btn:nth-child(1) { animation: fadeUp 0.6s 0.1s ease both; }
+    .btn:nth-child(3) { animation: fadeUp 0.6s 0.2s ease both; }
+    .btn:nth-child(4) { animation: fadeUp 0.6s 0.3s ease both; }
+    .btn:nth-child(5) { animation: fadeUp 0.6s 0.4s ease both; }
   </style>
 </head>
 <body>
+
+  <div class="bg">
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+  </div>
+
   <div class="card">
 
-    <!-- Avatar: replace the emoji with an <img> tag once you have a photo -->
     <div class="avatar-wrap">
-      <div class="avatar" style="
-        width:100px; height:100px; border-radius:50%;
-        background: linear-gradient(135deg,#1a1a2e,#2d1b69);
-        border: 3px solid #a855f7;
-        display:flex; align-items:center; justify-content:center;
-        font-size:2.8rem;">
-        🎭
+      <div class="avatar-ring">
+        <div class="avatar-inner">🎭</div>
       </div>
-      <!-- Remove the .live-badge line if you're not always live -->
-      <span class="live-badge">LIVE</span>
+      <span class="live-pill">
+        <span class="live-dot"></span> LIVE
+      </span>
     </div>
 
     <h1>Keith</h1>
@@ -202,32 +302,28 @@
 
     <div class="links">
 
-      <a class="btn btn-primary" href="https://chaturbate.com/brad_larck199" target="_blank" rel="noopener">
-        <span class="btn-icon">🔴</span> Watch Me Live
+      <a class="btn btn-chaturbate" href="https://chaturbate.com/brad_larck199" target="_blank" rel="noopener">
+        <span class="btn-icon">🔴</span> Watch Me Live on Chaturbate
       </a>
 
       <div class="divider">also find me on</div>
 
-      <a class="btn btn-dark" href="https://twitter.com/Keithbarron333" target="_blank" rel="noopener">
+      <a class="btn btn-x" href="https://twitter.com/Keithbarron333" target="_blank" rel="noopener">
         <span class="btn-icon">𝕏</span> Twitter / X
       </a>
 
-      <a class="btn btn-dark" href="https://instagram.com/keithmarc295" target="_blank" rel="noopener">
+      <a class="btn btn-ig" href="https://instagram.com/keithmarc295" target="_blank" rel="noopener">
         <span class="btn-icon">📸</span> Instagram
       </a>
 
-      <a class="btn btn-dark" href="https://onlyfans.com/keithbarron199" target="_blank" rel="noopener">
+      <a class="btn btn-of" href="https://onlyfans.com/keithbarron199" target="_blank" rel="noopener">
         <span class="btn-icon">🔞</span> OnlyFans
-      </a>
-
-      <!-- ✏️ Replace # with your Amazon wishlist URL -->
-      <a class="btn btn-dark" href="https://www.amazon.com/hz/wishlist/ls/YOUR_LIST_ID" target="_blank" rel="noopener">
-        <span class="btn-icon">🎁</span> Send Me a Gift
       </a>
 
     </div>
 
     <p class="footer">© 2026 Keith &nbsp;·&nbsp; All rights reserved</p>
   </div>
+
 </body>
 </html>
