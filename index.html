@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keith — Links</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      padding: 2rem 1rem;
+    }
+
+    /* animated background grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(120, 60, 200, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(200, 80, 120, 0.12) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    /* avatar */
+    .avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1.25rem;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid transparent;
+      background:
+        linear-gradient(#0a0a0a, #0a0a0a) padding-box,
+        linear-gradient(135deg, #a855f7, #ec4899) border-box;
+      /* placeholder gradient — replace src with your photo */
+      background-color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+
+    .avatar-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid transparent;
+      outline: 3px solid transparent;
+      box-shadow: 0 0 0 3px #a855f7;
+    }
+
+    .live-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 2px solid #0a0a0a;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 40%, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+
+    .tagline {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: #888;
+      margin-bottom: 2rem;
+      letter-spacing: 0.01em;
+    }
+
+    /* link buttons */
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.5rem;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      border: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(4px);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      opacity: 0.92;
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 20px rgba(168,85,247,0.35);
+    }
+
+    .btn-dark {
+      background: rgba(255,255,255,0.05);
+      color: #ddd;
+    }
+
+    .btn-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    /* divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.5rem 0;
+      color: #444;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* footer */
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.72rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- Avatar: replace the emoji with an <img> tag once you have a photo -->
+    <div class="avatar-wrap">
+      <div class="avatar" style="
+        width:100px; height:100px; border-radius:50%;
+        background: linear-gradient(135deg,#1a1a2e,#2d1b69);
+        border: 3px solid #a855f7;
+        display:flex; align-items:center; justify-content:center;
+        font-size:2.8rem;">
+        🎭
+      </div>
+      <!-- Remove the .live-badge line if you're not always live -->
+      <span class="live-badge">LIVE</span>
+    </div>
+
+    <h1>Keith</h1>
+    <p class="tagline">Your favorite middle age daddy</p>
+
+    <div class="links">
+
+      <!-- ✏️ Replace # with your actual Chaturbate URL -->
+      <a class="btn btn-primary" href="https://chaturbate.com/YOUR_USERNAME" target="_blank" rel="noopener">
+        <span class="btn-icon">🔴</span> Watch Me Live
+      </a>
+
+      <div class="divider">also find me on</div>
+
+      <!-- ✏️ Replace # with your Twitter/X URL -->
+      <a class="btn btn-dark" href="https://twitter.com/YOUR_HANDLE" target="_blank" rel="noopener">
+        <span class="btn-icon">𝕏</span> Twitter / X
+      </a>
+
+      <!-- ✏️ Replace # with your Instagram URL -->
+      <a class="btn btn-dark" href="https://instagram.com/YOUR_HANDLE" target="_blank" rel="noopener">
+        <span class="btn-icon">📸</span> Instagram
+      </a>
+
+      <!-- ✏️ Replace # with your OnlyFans or Fansly URL -->
+      <a class="btn btn-dark" href="https://onlyfans.com/YOUR_USERNAME" target="_blank" rel="noopener">
+        <span class="btn-icon">🔞</span> OnlyFans / Fansly
+      </a>
+
+      <!-- ✏️ Replace # with your Amazon wishlist URL -->
+      <a class="btn btn-dark" href="https://www.amazon.com/hz/wishlist/ls/YOUR_LIST_ID" target="_blank" rel="noopener">
+        <span class="btn-icon">🎁</span> Send Me a Gift
+      </a>
+
+    </div>
+
+    <p class="footer">© 2026 Keith &nbsp;·&nbsp; All rights reserved</p>
+  </div>
+</body>
+</html>
