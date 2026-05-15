@@ -118,6 +118,13 @@
       align-items: center;
       justify-content: center;
       font-size: 3rem;
+      overflow: hidden;
+    }
+    .avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .live-pill {
       position: absolute;
@@ -290,7 +297,7 @@
 
     <div class="avatar-wrap">
       <div class="avatar-ring">
-        <div class="avatar-inner">🎭</div>
+        <div class="avatar-inner"><img src="images/profile.png" alt="Keith" /></div>
       </div>
       <span class="live-pill">
         <span class="live-dot"></span> LIVE
