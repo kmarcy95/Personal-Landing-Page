@@ -1,0 +1,27 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/gallery"
+public_folder: "/images/gallery"
+
+publish_mode: simple
+
+collections:
+  - name: gallery
+    label: "Exclusive Gallery"
+    files:
+      - name: tiles
+        label: "Tiles"
+        file: "gallery.json"
+        format: "json"
+        fields:
+          - name: items
+            label: "Tiles"
+            label_singular: "Tile"
+            widget: list
+            summary: "{{caption}}"
+            fields:
+              - { name: image, label: "Preview image", widget: image }
+              - { name: caption, label: "Caption (optional)", widget: string, required: false }
+              - { name: unlock_url, label: "Unlock URL", widget: string, default: "https://onlyfans.com/keithbarron199" }
