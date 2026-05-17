@@ -597,8 +597,8 @@
           const cap = it.caption ? `<span class="tile-caption" aria-hidden="true">${escapeHtml(it.caption)}</span>` : '';
           const label = it.caption ? `Unlock ${escapeHtml(it.caption)} on OnlyFans` : 'Unlock on OnlyFans';
           return `
-            <a class="tile reveal" href="${escapeAttr(url)}" target="_blank" rel="noopener" aria-label="${label}">
-              <img class="tile-image" src="${escapeAttr(it.image)}" alt="" aria-hidden="true" />
+            <a class="tile reveal" href="${safeUrl(url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeAttr(label)}">
+              <img class="tile-image" src="${safeUrl(it.image)}" alt="" aria-hidden="true" />
               <span class="tile-lock" aria-hidden="true">${lockSvg}</span>
               <span class="tile-cta" aria-hidden="true">Unlock on OnlyFans →</span>
               ${cap}
@@ -618,6 +618,15 @@
     }
     function escapeAttr(s) {
       return escapeHtml(s);
+    }
+    function safeUrl(s) {
+      try {
+        const url = new URL(String(s), window.location.href);
+        if (url.protocol !== 'https:' && url.protocol !== 'http:') return '#';
+        return escapeHtml(url.href);
+      } catch {
+        return '#';
+      }
     }
 
     window.addEventListener('gallery:ready', () => {
