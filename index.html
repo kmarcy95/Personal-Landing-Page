@@ -775,6 +775,67 @@
       }
     }
 
+    // Modal handler — click tile → open dialog with price + "coming soon" message.
+    (function setupModal() {
+      const dialog = document.getElementById('tile-modal');
+      if (!dialog) return;
+      const grid = document.getElementById('gallery-grid');
+      if (!grid) return;
+
+      const closeBtn = dialog.querySelector('.modal-close');
+      const mediaSlot = document.getElementById('modal-media');
+      const titleSlot = document.getElementById('modal-title');
+      const priceSlot = document.getElementById('modal-price');
+      const VIDEO_EXTS = /\.(mp4|webm)(\?|$)/i;
+      let lastFocused = null;
+
+      function openModal(item, triggerEl) {
+        lastFocused = triggerEl;
+        titleSlot.textContent = item.caption || 'Locked content';
+        const priceNum = Number(item.price) || 0;
+        priceSlot.textContent = `$${priceNum} to unlock`;
+
+        const mediaPath = item.media || '';
+        const isVideo = VIDEO_EXTS.test(mediaPath);
+        if (isVideo) {
+          mediaSlot.innerHTML = `<video class="modal-media-el" preload="metadata" muted playsinline><source src="${safeUrl(mediaPath)}" /></video>`;
+        } else {
+          mediaSlot.innerHTML = `<img class="modal-media-el" src="${safeUrl(mediaPath)}" alt="" />`;
+        }
+
+        document.body.style.overflow = 'hidden';
+        dialog.showModal();
+      }
+
+      // Click delegation on the grid — opens modal for the clicked tile.
+      grid.addEventListener('click', (e) => {
+        const tile = e.target.closest('.tile');
+        if (!tile || !grid.contains(tile)) return;
+        const i = parseInt(tile.dataset.index, 10);
+        const item = galleryItems[i];
+        if (!item) return;
+        openModal(item, tile);
+      });
+
+      // Explicit close button.
+      closeBtn.addEventListener('click', () => dialog.close());
+
+      // Backdrop click — dialog element fills the viewport; clicks on inner content don't bubble to dialog itself.
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+
+      // Cleanup after close (close event fires for both .close() and Esc).
+      dialog.addEventListener('close', () => {
+        mediaSlot.innerHTML = '';
+        document.body.style.overflow = '';
+        if (lastFocused) {
+          lastFocused.focus();
+          lastFocused = null;
+        }
+      });
+    })();
+
     window.addEventListener('gallery:ready', () => {
       // Magnetic / tilt hover on buttons — skipped on touch devices and reduced-motion users.
       (function () {
