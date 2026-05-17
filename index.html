@@ -569,50 +569,7 @@
       </div>
       <p class="exclusive-tease reveal">Locked previews — unlock the full set on OnlyFans.</p>
       <div class="gallery-grid" id="gallery-grid">
-        <a class="tile reveal" href="https://onlyfans.com/keithbarron199" target="_blank" rel="noopener" aria-label="Unlock photo set 1 on OnlyFans">
-          <img class="tile-image" src="images/profile.png" alt="" aria-hidden="true" />
-          <span class="tile-lock" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </span>
-          <span class="tile-cta" aria-hidden="true">Unlock on OnlyFans →</span>
-          <span class="tile-caption" aria-hidden="true">20 photos</span>
-        </a>
-        <a class="tile reveal" href="https://onlyfans.com/keithbarron199" target="_blank" rel="noopener" aria-label="Unlock video set on OnlyFans">
-          <img class="tile-image" src="images/profile.png" alt="" aria-hidden="true" />
-          <span class="tile-lock" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </span>
-          <span class="tile-cta" aria-hidden="true">Unlock on OnlyFans →</span>
-          <span class="tile-caption" aria-hidden="true">Video · 4 min</span>
-        </a>
-        <a class="tile reveal" href="https://onlyfans.com/keithbarron199" target="_blank" rel="noopener" aria-label="Unlock photo set 2 on OnlyFans">
-          <img class="tile-image" src="images/profile.png" alt="" aria-hidden="true" />
-          <span class="tile-lock" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </span>
-          <span class="tile-cta" aria-hidden="true">Unlock on OnlyFans →</span>
-          <span class="tile-caption" aria-hidden="true">12 photos</span>
-        </a>
-        <a class="tile reveal" href="https://onlyfans.com/keithbarron199" target="_blank" rel="noopener" aria-label="Unlock video set 2 on OnlyFans">
-          <img class="tile-image" src="images/profile.png" alt="" aria-hidden="true" />
-          <span class="tile-lock" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </span>
-          <span class="tile-cta" aria-hidden="true">Unlock on OnlyFans →</span>
-          <span class="tile-caption" aria-hidden="true">Video · 6 min</span>
-        </a>
+        <!-- populated at runtime from gallery.json -->
       </div>
     </section>
 
@@ -620,76 +577,121 @@
   </main>
 
   <script>
-    // Magnetic / tilt hover on buttons — skipped on touch devices and reduced-motion users.
-    (function () {
-      if (!matchMedia('(hover: hover)').matches) return;
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Gallery render — fetch the manifest, build tiles, then init interactions.
+    (async function init() {
+      const grid = document.getElementById('gallery-grid');
+      if (!grid) return;
 
-      const STRENGTH_X = 0.18;
-      const STRENGTH_Y = 0.22;
+      const lockSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 
-      document.querySelectorAll('.btn, .tile').forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-          const r = btn.getBoundingClientRect();
-          const x = e.clientX - r.left - r.width / 2;
-          const y = e.clientY - r.top - r.height / 2;
-          btn.style.transform = `translate(${x * STRENGTH_X}px, ${y * STRENGTH_Y - 3}px)`;
-        });
-        btn.addEventListener('mouseleave', () => {
-          btn.style.transform = '';
-        });
-      });
-    })();
+      const DEFAULT_UNLOCK = 'https://onlyfans.com/keithbarron199';
 
-    // Cursor-following spotlight on the card — skips touch + reduced-motion users.
-    (function () {
-      if (!matchMedia('(hover: hover)').matches) return;
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      try {
+        const res = await fetch('/gallery.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`gallery.json HTTP ${res.status}`);
+        const data = await res.json();
+        const items = Array.isArray(data.items) ? data.items : [];
 
-      const card = document.querySelector('.card');
-      if (!card) return;
-
-      card.addEventListener('mousemove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width) * 100;
-        const y = ((e.clientY - r.top) / r.height) * 100;
-        card.style.setProperty('--mx', `${x}%`);
-        card.style.setProperty('--my', `${y}%`);
-        card.classList.add('spotlight-on');
-      });
-      card.addEventListener('mouseleave', () => {
-        card.classList.remove('spotlight-on');
-      });
-    })();
-
-    // Scroll-triggered reveals via IntersectionObserver.
-    (function () {
-      const items = document.querySelectorAll('.reveal');
-      if (!items.length) return;
-
-      // Reduced motion: skip the choreography entirely, show items immediately.
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        items.forEach(el => el.classList.add('in-view'));
-        return;
+        grid.innerHTML = items.map((it, i) => {
+          const url = it.unlock_url || DEFAULT_UNLOCK;
+          const cap = it.caption ? `<span class="tile-caption" aria-hidden="true">${escapeHtml(it.caption)}</span>` : '';
+          const label = it.caption ? `Unlock ${escapeHtml(it.caption)} on OnlyFans` : 'Unlock on OnlyFans';
+          return `
+            <a class="tile reveal" href="${escapeAttr(url)}" target="_blank" rel="noopener" aria-label="${label}">
+              <img class="tile-image" src="${escapeAttr(it.image)}" alt="" aria-hidden="true" />
+              <span class="tile-lock" aria-hidden="true">${lockSvg}</span>
+              <span class="tile-cta" aria-hidden="true">Unlock on OnlyFans →</span>
+              ${cap}
+            </a>`;
+        }).join('');
+      } catch (err) {
+        console.error('Gallery render failed:', err);
+        grid.innerHTML = '';
       }
 
-      // Stagger tiles only (80ms between them); non-tile reveals get no extra delay.
-      const tiles = document.querySelectorAll('.tile.reveal');
-      tiles.forEach((tile, i) => {
-        tile.style.transitionDelay = `${i * 80}ms`;
-      });
-
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            io.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15 });
-
-      items.forEach(el => io.observe(el));
+      // After the DOM is populated, kick off the interaction setups.
+      window.dispatchEvent(new Event('gallery:ready'));
     })();
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function escapeAttr(s) {
+      return escapeHtml(s);
+    }
+
+    window.addEventListener('gallery:ready', () => {
+      // Magnetic / tilt hover on buttons — skipped on touch devices and reduced-motion users.
+      (function () {
+        if (!matchMedia('(hover: hover)').matches) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const STRENGTH_X = 0.18;
+        const STRENGTH_Y = 0.22;
+
+        document.querySelectorAll('.btn, .tile').forEach(btn => {
+          btn.addEventListener('mousemove', (e) => {
+            const r = btn.getBoundingClientRect();
+            const x = e.clientX - r.left - r.width / 2;
+            const y = e.clientY - r.top - r.height / 2;
+            btn.style.transform = `translate(${x * STRENGTH_X}px, ${y * STRENGTH_Y - 3}px)`;
+          });
+          btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+          });
+        });
+      })();
+
+      // Cursor-following spotlight on the card — skips touch + reduced-motion users.
+      (function () {
+        if (!matchMedia('(hover: hover)').matches) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const card = document.querySelector('.card');
+        if (!card) return;
+
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          const x = ((e.clientX - r.left) / r.width) * 100;
+          const y = ((e.clientY - r.top) / r.height) * 100;
+          card.style.setProperty('--mx', `${x}%`);
+          card.style.setProperty('--my', `${y}%`);
+          card.classList.add('spotlight-on');
+        });
+        card.addEventListener('mouseleave', () => {
+          card.classList.remove('spotlight-on');
+        });
+      })();
+
+      // Scroll-triggered reveals via IntersectionObserver.
+      (function () {
+        const items = document.querySelectorAll('.reveal');
+        if (!items.length) return;
+
+        // Reduced motion: skip the choreography entirely, show items immediately.
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          items.forEach(el => el.classList.add('in-view'));
+          return;
+        }
+
+        // Stagger tiles only (80ms between them); non-tile reveals get no extra delay.
+        const tiles = document.querySelectorAll('.tile.reveal');
+        tiles.forEach((tile, i) => {
+          tile.style.transitionDelay = `${i * 80}ms`;
+        });
+
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        items.forEach(el => io.observe(el));
+      })();
+    });
   </script>
 
 </body>
