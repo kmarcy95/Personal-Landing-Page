@@ -435,6 +435,24 @@
       outline-offset: 3px;
     }
 
+    /* tile hover micro-interactions */
+    .tile:hover .tile-image,
+    .tile:focus-visible .tile-image {
+      filter: blur(8px) brightness(0.7) saturate(1.15);
+      transform: scale(1.08);
+    }
+    .tile:hover .tile-lock,
+    .tile:focus-visible .tile-lock {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    .tile:hover .tile-cta,
+    .tile:focus-visible .tile-cta {
+      opacity: 1;
+    }
+    .tile:hover {
+      box-shadow: 0 8px 24px rgba(168,85,247,0.35);
+    }
+
     /* footer */
     .footer {
       margin-top: 2rem;
