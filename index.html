@@ -786,6 +786,7 @@
       const mediaSlot = document.getElementById('modal-media');
       const titleSlot = document.getElementById('modal-title');
       const priceSlot = document.getElementById('modal-price');
+      if (!closeBtn || !mediaSlot || !titleSlot || !priceSlot) return;
       const VIDEO_EXTS = /\.(mp4|webm)(\?|$)/i;
       let lastFocused = null;
 
