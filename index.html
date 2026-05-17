@@ -465,6 +465,24 @@
       outline: 2px solid #c084fc;
       outline-offset: 3px;
     }
+    .tile-video-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 22px;
+      height: 22px;
+      padding: 4px;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 50%;
+      color: #fff;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .tile-video-indicator svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
 
     /* tile hover micro-interactions */
     .tile:hover .tile-image,
@@ -690,39 +708,54 @@
   </dialog>
 
   <script>
-    // Gallery render — fetch the manifest, build tiles, then init interactions.
+    // In-memory tile data, populated by the render IIFE and read by the modal IIFE.
+    let galleryItems = [];
+
+    // Gallery render — fetch manifest, detect media types, build button tiles.
     (async function init() {
       const grid = document.getElementById('gallery-grid');
       if (!grid) return;
 
       const lockSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
-
-      const DEFAULT_UNLOCK = 'https://onlyfans.com/keithbarron199';
+      const playSvg = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      const VIDEO_EXTS = /\.(mp4|webm)(\?|$)/i;
 
       try {
         const res = await fetch('/gallery.json', { cache: 'no-cache' });
         if (!res.ok) throw new Error(`gallery.json HTTP ${res.status}`);
         const data = await res.json();
-        const items = Array.isArray(data.items) ? data.items : [];
+        galleryItems = Array.isArray(data.items) ? data.items : [];
 
-        grid.innerHTML = items.map((it, i) => {
-          const url = it.unlock_url || DEFAULT_UNLOCK;
+        grid.innerHTML = galleryItems.map((it, i) => {
+          const mediaPath = it.media || '';
+          const isVideo = VIDEO_EXTS.test(mediaPath);
+          const mediaEl = isVideo
+            ? `<video class="tile-image" preload="metadata" muted playsinline aria-hidden="true"><source src="${safeUrl(mediaPath)}" /></video>`
+            : `<img class="tile-image" src="${safeUrl(mediaPath)}" alt="" aria-hidden="true" />`;
+          const videoIcon = isVideo
+            ? `<span class="tile-video-indicator" aria-hidden="true">${playSvg}</span>`
+            : '';
           const cap = it.caption ? `<span class="tile-caption" aria-hidden="true">${escapeHtml(it.caption)}</span>` : '';
-          const label = it.caption ? `Unlock ${escapeHtml(it.caption)} on OnlyFans` : 'Unlock on OnlyFans';
+          const priceNum = Number(it.price) || 0;
+          const priceText = `$${priceNum}`;
+          const labelParts = ['Unlock'];
+          if (it.caption) labelParts.push(it.caption);
+          labelParts.push(`— ${priceText}`);
+          const label = labelParts.join(' ');
           return `
-            <a class="tile reveal" href="${safeUrl(url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeAttr(label)}">
-              <img class="tile-image" src="${safeUrl(it.image)}" alt="" aria-hidden="true" />
+            <button type="button" class="tile reveal" data-index="${i}" aria-haspopup="dialog" aria-label="${escapeAttr(label)}">
+              ${mediaEl}
+              ${videoIcon}
               <span class="tile-lock" aria-hidden="true">${lockSvg}</span>
-              <span class="tile-cta" aria-hidden="true">Unlock on OnlyFans →</span>
+              <span class="tile-cta" aria-hidden="true">&#x1F512; ${escapeHtml(priceText)}</span>
               ${cap}
-            </a>`;
+            </button>`;
         }).join('');
       } catch (err) {
         console.error('Gallery render failed:', err);
         grid.innerHTML = '';
       }
 
-      // After the DOM is populated, kick off the interaction setups.
       window.dispatchEvent(new Event('gallery:ready'));
     })();
 
