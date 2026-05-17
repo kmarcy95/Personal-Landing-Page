@@ -108,6 +108,20 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* cursor-following spotlight overlay on the card */
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 2;
+      background: radial-gradient(circle 220px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.07), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .card.spotlight-on::before { opacity: 1; }
+
     /* avatar */
     .avatar-wrap {
       position: relative;
@@ -613,6 +627,27 @@
         btn.addEventListener('mouseleave', () => {
           btn.style.transform = '';
         });
+      });
+    })();
+
+    // Cursor-following spotlight on the card — skips touch + reduced-motion users.
+    (function () {
+      if (!matchMedia('(hover: hover)').matches) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const card = document.querySelector('.card');
+      if (!card) return;
+
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width) * 100;
+        const y = ((e.clientY - r.top) / r.height) * 100;
+        card.style.setProperty('--mx', `${x}%`);
+        card.style.setProperty('--my', `${y}%`);
+        card.classList.add('spotlight-on');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.classList.remove('spotlight-on');
       });
     })();
   </script>
