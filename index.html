@@ -178,12 +178,18 @@
       font-size: 2rem;
       font-weight: 800;
       letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #ffffff 30%, #c084fc 70%, #f472b6);
+      background: linear-gradient(135deg, #ffffff 0%, #c084fc 35%, #f472b6 70%, #ffffff 100%);
+      background-size: 220% 220%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-bottom: 0.35rem;
       line-height: 1.1;
+      animation: hue-drift 8s ease-in-out infinite;
+    }
+    @keyframes hue-drift {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
     }
     .tagline {
       font-size: 0.88rem;
