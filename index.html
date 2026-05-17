@@ -597,7 +597,7 @@
       const STRENGTH_X = 0.18;
       const STRENGTH_Y = 0.22;
 
-      document.querySelectorAll('.btn').forEach(btn => {
+      document.querySelectorAll('.btn, .tile').forEach(btn => {
         btn.addEventListener('mousemove', (e) => {
           const r = btn.getBoundingClientRect();
           const x = e.clientX - r.left - r.width / 2;
