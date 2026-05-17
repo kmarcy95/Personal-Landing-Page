@@ -334,6 +334,35 @@
       background: rgba(255,255,255,0.06);
     }
 
+    /* exclusive section */
+    .exclusive {
+      margin-top: 2rem;
+    }
+    .divider-exclusive {
+      color: #c084fc;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      margin-bottom: 0.6rem;
+    }
+    .divider-exclusive::before,
+    .divider-exclusive::after {
+      background: linear-gradient(90deg, transparent, rgba(192,132,252,0.4), transparent);
+    }
+    .exclusive-tease {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+    }
+    @media (max-width: 480px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+
     /* footer */
     .footer {
       margin-top: 2rem;
@@ -411,6 +440,16 @@
       </a>
 
     </nav>
+
+    <section class="exclusive" aria-labelledby="exclusive-heading">
+      <div class="divider divider-exclusive" role="separator">
+        <span id="exclusive-heading">Exclusive Content</span>
+      </div>
+      <p class="exclusive-tease">Locked previews — unlock the full set on OnlyFans.</p>
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- tiles rendered here (Task 9 fills this dynamically; Tasks 3-8 use a hardcoded version we replace) -->
+      </div>
+    </section>
 
     <p class="footer">© 2026 Keith &nbsp;·&nbsp; All rights reserved</p>
   </main>
