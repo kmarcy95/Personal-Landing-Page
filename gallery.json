@@ -1,24 +1,24 @@
 {
   "items": [
     {
-      "image": "/images/gallery/teaser-01.jpg",
+      "media": "/images/gallery/teaser-01.jpg",
       "caption": "20 photos",
-      "unlock_url": "https://onlyfans.com/keithbarron199"
+      "price": 10
     },
     {
-      "image": "/images/gallery/teaser-02.jpg",
+      "media": "/images/gallery/teaser-02.jpg",
       "caption": "Video · 4 min",
-      "unlock_url": "https://onlyfans.com/keithbarron199"
+      "price": 15
     },
     {
-      "image": "/images/gallery/teaser-03.jpg",
+      "media": "/images/gallery/teaser-03.jpg",
       "caption": "12 photos",
-      "unlock_url": "https://onlyfans.com/keithbarron199"
+      "price": 8
     },
     {
-      "image": "/images/gallery/teaser-04.jpg",
+      "media": "/images/gallery/teaser-04.jpg",
       "caption": "Video · 6 min",
-      "unlock_url": "https://onlyfans.com/keithbarron199"
+      "price": 20
     }
   ]
 }

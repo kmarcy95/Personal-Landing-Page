@@ -22,6 +22,6 @@ collections:
             widget: list
             summary: "{{caption}}"
             fields:
-              - { name: image, label: "Preview image", widget: image }
+              - { name: media, label: "Media (photo or short video, max 25MB)", widget: file, allow_multiple: false }
               - { name: caption, label: "Caption (optional)", widget: string, required: false }
-              - { name: unlock_url, label: "Unlock URL", widget: string, default: "https://onlyfans.com/keithbarron199" }
+              - { name: price, label: "Price (USD, whole dollars)", widget: number, value_type: int, min: 1, default: 10 }
