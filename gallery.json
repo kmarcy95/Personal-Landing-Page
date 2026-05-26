@@ -3,22 +3,22 @@
     {
       "media": "/images/gallery/teaser-01.jpg",
       "caption": "20 photos",
-      "price": 10
+      "price": 25
     },
     {
       "media": "/images/gallery/teaser-02.jpg",
       "caption": "Video · 4 min",
-      "price": 15
+      "price": 20
     },
     {
       "media": "/images/gallery/teaser-03.jpg",
       "caption": "12 photos",
-      "price": 8
+      "price": 15
     },
     {
       "media": "/images/gallery/teaser-04.jpg",
       "caption": "Video · 6 min",
-      "price": 20
+      "price": 30
     }
   ]
 }
