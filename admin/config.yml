@@ -25,3 +25,60 @@ collections:
               - { name: media, label: "Media (photo or short video, max 25MB)", widget: file, allow_multiple: false }
               - { name: caption, label: "Caption (optional)", widget: string, required: false }
               - { name: price, label: "Price (USD, whole dollars)", widget: number, value_type: int, min: 1, default: 10 }
+
+  - name: schedule
+    label: "Stream Schedule"
+    files:
+      - name: weekly
+        label: "Weekly schedule"
+        file: "schedule.json"
+        format: "json"
+        fields:
+          - { name: tz, label: "Home timezone (IANA, e.g. America/Chicago)", widget: string, default: "America/Chicago" }
+          - name: slots
+            label: "Weekly recurring slots"
+            label_singular: "Slot"
+            widget: list
+            summary: "{{day}} {{start}}-{{end}}"
+            fields:
+              - { name: day, label: "Day", widget: select, options: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"] }
+              - { name: start, label: "Start (24h, HH:MM)", widget: string, pattern: ['^\d{2}:\d{2}$', "Use HH:MM"] }
+              - { name: end, label: "End (24h, HH:MM)", widget: string, pattern: ['^\d{2}:\d{2}$', "Use HH:MM"] }
+          - name: overrides
+            label: "One-off overrides (cancel a day)"
+            label_singular: "Override"
+            widget: list
+            required: false
+            summary: "{{date}}"
+            fields:
+              - { name: date, label: "Date (YYYY-MM-DD)", widget: string, pattern: ['^\d{4}-\d{2}-\d{2}$', "Use YYYY-MM-DD"] }
+              - { name: off, label: "Cancelled?", widget: boolean, default: true }
+              - { name: note, label: "Note (optional)", widget: string, required: false }
+
+  - name: testimonials
+    label: "Testimonials"
+    files:
+      - name: list
+        label: "Fan quotes"
+        file: "testimonials.json"
+        format: "json"
+        fields:
+          - name: items
+            label: "Quotes"
+            label_singular: "Quote"
+            widget: list
+            summary: "{{quote}}"
+            fields:
+              - { name: quote, label: "Quote (max ~200 chars)", widget: string, pattern: ['^.{1,200}$', "Keep under 200 characters"] }
+              - { name: handle, label: "Handle or attribution (optional)", widget: string, required: false }
+
+  - name: bio
+    label: "Hero copy"
+    files:
+      - name: bio
+        label: "Bio"
+        file: "bio.json"
+        format: "json"
+        fields:
+          - { name: subtitle, label: "Eyebrow (small line above wordmark)", widget: string }
+          - { name: tagline, label: "Tagline (single line under wordmark)", widget: string }

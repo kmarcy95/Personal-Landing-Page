@@ -1,0 +1,9 @@
+# Dev-only image pipeline — never ships to Netlify
+tools/node_modules/
+
+# Local Netlify CLI artifacts
+.netlify/
+
+# OS noise
+.DS_Store
+Thumbs.db

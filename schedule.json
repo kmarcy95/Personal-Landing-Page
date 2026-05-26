@@ -1,0 +1,9 @@
+{
+  "tz": "America/Chicago",
+  "slots": [
+    { "day": "Mon", "start": "21:00", "end": "23:30" },
+    { "day": "Wed", "start": "21:00", "end": "23:30" },
+    { "day": "Fri", "start": "22:00", "end": "01:00" }
+  ],
+  "overrides": []
+}
