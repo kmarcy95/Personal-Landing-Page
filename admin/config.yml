@@ -42,8 +42,8 @@ collections:
             summary: "{{day}} {{start}}-{{end}}"
             fields:
               - { name: day, label: "Day", widget: select, options: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"] }
-              - { name: start, label: "Start (24h, HH:MM)", widget: string, pattern: ['^\d{2}:\d{2}$', "Use HH:MM"] }
-              - { name: end, label: "End (24h, HH:MM)", widget: string, pattern: ['^\d{2}:\d{2}$', "Use HH:MM"] }
+              - { name: start, label: "Start (24h, HH:MM)", widget: string, pattern: ['^([01]\d|2[0-3]):[0-5]\d$', "Use HH:MM (e.g. 22:00)"] }
+              - { name: end, label: "End (24h, HH:MM)", widget: string, pattern: ['^([01]\d|2[0-3]):[0-5]\d$', "Use HH:MM (e.g. 22:00)"] }
           - name: overrides
             label: "One-off overrides (cancel a day)"
             label_singular: "Override"
