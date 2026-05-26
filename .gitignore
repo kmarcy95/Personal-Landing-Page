@@ -7,3 +7,6 @@ tools/node_modules/
 # OS noise
 .DS_Store
 Thumbs.db
+
+# Local-only image sources (do not publish originals)
+_image-sources/

@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "personal-lp-tools",
+  "description": "Dev-only image pipeline. Never ships to Netlify.",
+  "scripts": {
+    "optimize": "node optimize-images.js"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0"
+  }
+}
