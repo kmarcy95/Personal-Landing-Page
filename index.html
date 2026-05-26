@@ -973,6 +973,26 @@
         items.forEach(el => io.observe(el));
       })();
     });
+
+    // Bio IIFE — load subtitle + tagline from bio.json, fall back to hardcoded copy on failure.
+    (async function loadBio() {
+      const subtitleEl = document.getElementById('hero-subtitle');
+      const taglineEl = document.getElementById('hero-tagline');
+      if (!subtitleEl || !taglineEl) return;
+      try {
+        const res = await fetch('/bio.json', { cache: 'no-cache' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && typeof data.subtitle === 'string' && data.subtitle.trim()) {
+          subtitleEl.textContent = data.subtitle;
+        }
+        if (data && typeof data.tagline === 'string' && data.tagline.trim()) {
+          taglineEl.textContent = data.tagline;
+        }
+      } catch (err) {
+        console.warn('Bio load failed:', err);
+      }
+    })();
   </script>
 
 </body>
