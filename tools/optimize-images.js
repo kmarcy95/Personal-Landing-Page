@@ -19,19 +19,11 @@ const TEASER_QUALITY = 75;
 
 function fmtKb(bytes) { return (bytes / 1024).toFixed(1) + ' KB'; }
 
-function findSource(stem) {
-  const exts = ['.jpg', '.jpeg', '.png', '.webp'];
-  for (const ext of exts) {
-    const p = path.join(SRC, stem + ext);
-    if (fs.existsSync(p)) return p;
-  }
-  return null;
-}
+const SOURCE_EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
 
-function findGallerySource(stem) {
-  const exts = ['.jpg', '.jpeg', '.png', '.webp'];
-  for (const ext of exts) {
-    const p = path.join(SRC, 'gallery', stem + ext);
+function findSource(stem, subdir = '') {
+  for (const ext of SOURCE_EXTS) {
+    const p = path.join(SRC, subdir, stem + ext);
     if (fs.existsSync(p)) return p;
   }
   return null;
@@ -60,12 +52,13 @@ async function processProfile() {
 async function processTeasers() {
   for (let i = 1; i <= 4; i++) {
     const stem = 'teaser-' + String(i).padStart(2, '0');
-    const src = findGallerySource(stem);
+    const src = findSource(stem, 'gallery');
     if (!src) {
       console.log(`SKIP ${stem}: no _image-sources/gallery/${stem}.{jpg,png,webp} found`);
       continue;
     }
     const out = path.join(OUT_GALLERY, stem + '.webp');
+    // fit: 'cover' center-crops the source to 3:4. Provide a source ≥600×800 in 3:4 to avoid losing content.
     await sharp(src)
       .resize(600, 800, { fit: 'cover' })
       .webp({ quality: TEASER_QUALITY })
