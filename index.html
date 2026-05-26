@@ -112,6 +112,15 @@
       transition: opacity 0.2s ease;
     }
     .cta-btn:hover { opacity: 0.9; }
+    .cta-btn.cta-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .cta-btn.cta-ghost:hover {
+      background: rgba(122, 77, 255, 0.12);
+      border-color: var(--violet);
+    }
 
     /* HERO */
     .hero {
@@ -191,90 +200,121 @@
       line-height: 1.5;
     }
 
-    /* LINKS GRID — single column on small phones, 2x2 on tablet, 4-across on wide screens so handles always fit. */
-    .links-grid {
+    /* LANE CARDS — two equal-weight CTAs (Chaturbate / OnlyFans) */
+    .lane-cards {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
-      max-width: 360px;
+      gap: 14px;
+      max-width: 420px;
       width: 100%;
       margin: 0 auto;
     }
-    @media (min-width: 500px) {
-      .links-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        max-width: 520px;
+    @media (min-width: 720px) {
+      .lane-cards {
+        grid-template-columns: 1fr 1fr;
+        max-width: 760px;
+        gap: 18px;
       }
     }
-    @media (min-width: 900px) {
-      .links-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        max-width: 880px;
-      }
-    }
-    .link-tile {
+    .lane-card {
+      position: relative;
       display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 16px 18px;
-      border-radius: 16px;
+      flex-direction: column;
+      gap: 6px;
+      padding: 22px 24px;
+      border-radius: 18px;
       background: var(--card);
       border: 1px solid var(--border);
       text-decoration: none;
       color: var(--text);
-      min-width: 0;
+      min-height: 130px;
       transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
-    .link-tile:hover {
+    .lane-card:hover {
       background: rgba(122, 77, 255, 0.08);
       border-color: var(--violet);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
-    .link-tile.primary {
-      background: linear-gradient(135deg, var(--violet), var(--violet-bright));
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    .link-tile.primary:hover { opacity: 0.92; }
-    .link-tile:focus-visible {
+    .lane-card:focus-visible {
       outline: 2px solid var(--violet-bright);
       outline-offset: 3px;
     }
-    .link-icon {
-      width: 38px; height: 38px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      display: flex;
+    .lane-card.lane-library {
+      background: linear-gradient(135deg, var(--violet), var(--violet-bright));
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .lane-card.lane-library:hover { opacity: 0.94; }
+    .lane-eyebrow {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .lane-card.lane-library .lane-eyebrow { color: rgba(255, 255, 255, 0.88); }
+    .lane-card.lane-live.is-live .lane-eyebrow { color: #ff2c5a; }
+    .lane-pulse {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
       flex-shrink: 0;
     }
-    .link-tile.primary .link-icon { background: rgba(255, 255, 255, 0.18); }
-    .link-icon svg { width: 20px; height: 20px; fill: currentColor; }
-    .link-label {
-      text-align: left;
-      line-height: 1.25;
-      min-width: 0;
-      flex: 1 1 auto;
-      overflow: hidden;
+    .lane-card.lane-live.is-live .lane-pulse {
+      background: #ff2c5a;
+      animation: pulse-dot 1.4s ease-in-out infinite;
     }
-    .link-label .name {
-      font-weight: 600;
-      font-size: 15px;
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .lane-lock { width: 14px; height: 14px; flex-shrink: 0; }
+    .lane-title {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 22px;
+      line-height: 1.1;
     }
-    .link-label .handle {
-      font-size: 12.5px;
+    .lane-sub {
+      font-size: 13.5px;
       color: var(--muted);
-      margin-top: 3px;
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
-    .link-tile.primary .link-label .handle { color: rgba(255, 255, 255, 0.85); }
+    .lane-card.lane-library .lane-sub { color: rgba(255, 255, 255, 0.85); }
+    .lane-arrow {
+      position: absolute;
+      bottom: 18px;
+      right: 22px;
+      font-size: 20px;
+      transition: transform 0.2s ease;
+    }
+    .lane-card:hover .lane-arrow { transform: translateX(4px); }
+
+    /* SOCIAL ROW — slim secondary follow targets */
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .social-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .social-btn:hover {
+      background: rgba(122, 77, 255, 0.12);
+      border-color: var(--violet);
+    }
+    .social-btn:focus-visible {
+      outline: 2px solid var(--violet-bright);
+      outline-offset: 3px;
+    }
+    .social-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
     /* SECTIONS */
     .section {
@@ -627,55 +667,43 @@
 
   <nav class="topbar">
     <a href="#" class="brand"><span class="brand-dot"></span>KEITH</a>
-    <a href="https://chaturbate.com/brad_larck199" class="cta-btn" target="_blank" rel="noopener">Watch live →</a>
+    <a href="#follow" class="cta-btn cta-ghost">Follow ↓</a>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
     <div class="hero-avatar-wrap">
       <img class="hero-avatar" src="images/profile.webp" srcset="images/profile.webp 1x, images/profile@2x.webp 2x" width="180" height="180" alt="Keith" />
-      <span class="live-badge" aria-label="Currently live"><span class="live-dot" aria-hidden="true"></span>LIVE</span>
+      <span class="live-badge" id="hero-live-badge" hidden aria-label="Currently live"><span class="live-dot" aria-hidden="true"></span>LIVE</span>
     </div>
-    <p class="hero-subtitle">Welcome to my world</p>
+    <p class="hero-subtitle" id="hero-subtitle">Welcome to my world</p>
     <h1 class="hero-title">Keith</h1>
-    <p class="hero-bio">Your favorite middle age daddy. Real moments, real connection — straight from me to you.</p>
+    <p class="hero-bio" id="hero-tagline">Live on cam most nights · Full library on OnlyFans · Real moments, daddy energy</p>
 
-    <nav class="links-grid" aria-label="Social links">
-      <a href="https://chaturbate.com/brad_larck199" class="link-tile primary" target="_blank" rel="noopener">
-        <span class="link-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-        <span class="link-label">
-          <span class="name">Chaturbate</span>
-          <span class="handle">Watch me live</span>
-        </span>
+    <div class="lane-cards" role="navigation" aria-label="Primary actions">
+      <a href="https://chaturbate.com/brad_larck199" class="lane-card lane-live" target="_blank" rel="noopener" id="lane-chaturbate">
+        <span class="lane-eyebrow" id="lane-live-eyebrow"><span class="lane-pulse" aria-hidden="true"></span>NEXT STREAM</span>
+        <span class="lane-title">Watch on Chaturbate</span>
+        <span class="lane-sub" id="lane-live-sub">Loading schedule…</span>
+        <span class="lane-arrow" aria-hidden="true">→</span>
       </a>
-      <a href="https://onlyfans.com/keithbarron199" class="link-tile" target="_blank" rel="noopener">
-        <span class="link-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2.4a7.6 7.6 0 1 1 0 15.2 7.6 7.6 0 0 1 0-15.2z"/><circle cx="8.4" cy="12" r="2.6"/></svg>
-        </span>
-        <span class="link-label">
-          <span class="name">OnlyFans</span>
-          <span class="handle">@keithbarron199</span>
-        </span>
+      <a href="https://onlyfans.com/keithbarron199" class="lane-card lane-library" target="_blank" rel="noopener">
+        <span class="lane-eyebrow"><svg class="lane-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>FULL LIBRARY</span>
+        <span class="lane-title">Unlock on OnlyFans</span>
+        <span class="lane-sub">New drops weekly · Exclusive sets</span>
+        <span class="lane-arrow" aria-hidden="true">→</span>
       </a>
-      <a href="https://x.com/Keithbarron3333" class="link-tile" target="_blank" rel="noopener">
-        <span class="link-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </span>
-        <span class="link-label">
-          <span class="name">Twitter / X</span>
-          <span class="handle">@Keithbarron3333</span>
-        </span>
+    </div>
+
+    <nav class="social-row" id="follow" aria-label="Social channels">
+      <a href="https://x.com/Keithbarron3333" class="social-btn" target="_blank" rel="noopener" aria-label="Keith on X">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       </a>
-      <a href="https://instagram.com/keithmarc295" class="link-tile" target="_blank" rel="noopener">
-        <span class="link-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58 0 4.85.07 1.17.05 1.8.25 2.22.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.05.41 2.22.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.22-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.05.36-2.22.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.22-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.05-.41-2.22C2.16 15.58 2.16 15.2 2.16 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.22.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.05-.36 2.22-.41C8.42 2.16 8.8 2.16 12 2.16zM12 0C8.74 0 8.33 0 7.05.07 5.78.13 4.9.33 4.14.63a5.9 5.9 0 0 0-2.13 1.38A5.9 5.9 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s0 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.73 1.48 1.38 2.13.65.65 1.33 1.07 2.13 1.38.76.3 1.64.5 2.91.56 1.28.06 1.69.07 4.95.07s3.67 0 4.95-.07c1.27-.06 2.15-.26 2.91-.56.8-.31 1.48-.73 2.13-1.38.65-.65 1.07-1.33 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s0-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
-        </span>
-        <span class="link-label">
-          <span class="name">Instagram</span>
-          <span class="handle">@keithmarc295</span>
-        </span>
+      <a href="https://instagram.com/keithmarc295" class="social-btn" target="_blank" rel="noopener" aria-label="Keith on Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58 0 4.85.07 1.17.05 1.8.25 2.22.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.05.41 2.22.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.22-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.05.36-2.22.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.22-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.05-.41-2.22C2.16 15.58 2.16 15.2 2.16 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.22.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.05-.36 2.22-.41C8.42 2.16 8.8 2.16 12 2.16zM12 0C8.74 0 8.33 0 7.05.07 5.78.13 4.9.33 4.14.63a5.9 5.9 0 0 0-2.13 1.38A5.9 5.9 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s0 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.73 1.48 1.38 2.13.65.65 1.33 1.07 2.13 1.38.76.3 1.64.5 2.91.56 1.28.06 1.69.07 4.95.07s3.67 0 4.95-.07c1.27-.06 2.15-.26 2.91-.56.8-.31 1.48-.73 2.13-1.38.65-.65 1.07-1.33 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s0-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
+      </a>
+      <a href="mailto:keith@keith-links.example?subject=DM%20via%20site" class="social-btn" aria-label="Send Keith a DM">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       </a>
     </nav>
   </section>
