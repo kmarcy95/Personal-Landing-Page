@@ -764,6 +764,57 @@
       font-size: 14px;
     }
 
+    /* STICKY MOBILE CTA */
+    .sticky-cta {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 90;
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(6, 6, 8, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 640px) {
+      .sticky-cta:not([hidden]) { display: grid; }
+      body.has-sticky-cta { padding-bottom: 64px; }
+    }
+    .sticky-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 56px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+      background: transparent;
+    }
+    .sticky-btn:focus-visible {
+      outline: 2px solid var(--violet-bright);
+      outline-offset: -2px;
+    }
+    .sticky-btn.sticky-library {
+      background: linear-gradient(135deg, var(--violet), var(--violet-bright));
+      color: #fff;
+    }
+    .sticky-pulse {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+    .sticky-btn.is-live .sticky-pulse {
+      background: #ff2c5a;
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+    .sticky-btn.is-live { color: #ff2c5a; }
+    .sticky-lock { width: 16px; height: 16px; flex-shrink: 0; }
+
     /* scroll-triggered reveals */
     .reveal {
       opacity: 0;
@@ -916,6 +967,18 @@
     </div>
     <p class="copyright">© 2026 Keith · All rights reserved</p>
   </footer>
+
+  <!-- STICKY MOBILE CTA (visible after hero scrolls past, mobile only) -->
+  <div class="sticky-cta" id="sticky-cta" hidden aria-label="Quick actions">
+    <a href="https://chaturbate.com/brad_larck199" class="sticky-btn sticky-live" id="sticky-live" target="_blank" rel="noopener">
+      <span class="sticky-pulse" aria-hidden="true"></span>
+      <span class="sticky-btn-label">Watch live</span>
+    </a>
+    <a href="https://onlyfans.com/keithbarron199" class="sticky-btn sticky-library" target="_blank" rel="noopener">
+      <svg class="sticky-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span class="sticky-btn-label">Unlock OF</span>
+    </a>
+  </div>
 
   <!-- Lock SVG template — cloned into dynamically built tiles. Static markup, no user input. -->
   <template id="lock-svg-tpl">
@@ -1461,6 +1524,46 @@
       } catch (err) {
         console.warn('Testimonials load failed:', err);
       }
+    })();
+
+    // Sticky mobile CTA — reveal after the hero scrolls out of view (mobile only),
+    // and reflect schedule:state on the live button accent.
+    (function stickyCta() {
+      const bar = document.getElementById('sticky-cta');
+      const liveBtn = document.getElementById('sticky-live');
+      const hero = document.querySelector('section.hero');
+      if (!bar || !liveBtn || !hero) return;
+
+      function show() {
+        if (bar.hidden) {
+          bar.hidden = false;
+          document.body.classList.add('has-sticky-cta');
+        }
+      }
+      function hide() {
+        if (!bar.hidden) {
+          bar.hidden = true;
+          document.body.classList.remove('has-sticky-cta');
+        }
+      }
+
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) hide();
+            else show();
+          }
+        }, { threshold: 0 });
+        io.observe(hero);
+      } else {
+        show();
+      }
+
+      window.addEventListener('schedule:state', (e) => {
+        const state = e.detail || {};
+        if (state.isLive) liveBtn.classList.add('is-live');
+        else liveBtn.classList.remove('is-live');
+      });
     })();
   </script>
 
