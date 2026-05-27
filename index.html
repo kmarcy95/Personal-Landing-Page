@@ -552,6 +552,52 @@
       color: #fff;
     }
 
+    /* TESTIMONIALS */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) {
+      .testimonials-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 900px) {
+      .testimonials-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .testimonial {
+      position: relative;
+      padding: 26px 22px 22px;
+      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+    .testimonial::before {
+      content: '\201C';
+      position: absolute;
+      top: 4px;
+      left: 14px;
+      font-family: 'Archivo Black', serif;
+      font-size: 56px;
+      color: var(--violet-bright);
+      opacity: 0.45;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .testimonial-quote {
+      font-size: 15.5px;
+      line-height: 1.55;
+      color: var(--text);
+      margin-top: 16px;
+    }
+    .testimonial-handle {
+      display: block;
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
     /* FAQ */
     .faq-wrap {
       max-width: 760px;
@@ -814,6 +860,13 @@
     <div class="content-grid" id="gallery-grid">
       <!-- populated at runtime from gallery.json via DOM methods -->
     </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section section-testimonials" id="testimonials" aria-labelledby="testimonials-heading" hidden>
+    <div class="section-eyebrow reveal">What Fans Are Saying</div>
+    <h2 class="section-title reveal" id="testimonials-heading">From the DMs</h2>
+    <div class="testimonials-grid reveal" id="testimonials-grid"></div>
   </section>
 
   <!-- FAQ -->
@@ -1347,6 +1400,62 @@
           sub.textContent = fmtNext(state);
         }
       });
+    })();
+
+    // Testimonials IIFE — fetch testimonials.json, render cards via DOM methods.
+    (async function loadTestimonials() {
+      const section = document.getElementById('testimonials');
+      const grid = document.getElementById('testimonials-grid');
+      if (!section || !grid) return;
+      try {
+        const res = await fetch('/testimonials.json', { cache: 'no-cache' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const items = Array.isArray(data && data.items) ? data.items : [];
+        if (items.length === 0) return;
+
+        const frag = document.createDocumentFragment();
+        for (const it of items) {
+          if (!it || typeof it.quote !== 'string' || !it.quote.trim()) continue;
+          const card = document.createElement('article');
+          card.className = 'testimonial reveal';
+
+          const q = document.createElement('p');
+          q.className = 'testimonial-quote';
+          q.textContent = it.quote;
+          card.appendChild(q);
+
+          if (typeof it.handle === 'string' && it.handle.trim()) {
+            const h = document.createElement('span');
+            h.className = 'testimonial-handle';
+            h.textContent = it.handle;
+            card.appendChild(h);
+          }
+
+          frag.appendChild(card);
+        }
+
+        if (!frag.childNodes.length) return;
+        while (grid.firstChild) grid.removeChild(grid.firstChild);
+        grid.appendChild(frag);
+        section.hidden = false;
+
+        // The scroll-reveal IIFE runs on initial load; observe the newly-appended cards too.
+        const newReveals = section.querySelectorAll('.reveal');
+        if (newReveals.length && 'IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                io.unobserve(entry.target);
+              }
+            }
+          }, { threshold: 0.15 });
+          newReveals.forEach(el => io.observe(el));
+        }
+      } catch (err) {
+        console.warn('Testimonials load failed:', err);
+      }
     })();
   </script>
 
