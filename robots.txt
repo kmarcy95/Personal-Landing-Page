@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://keith-links-995.netlify.app/sitemap.xml
