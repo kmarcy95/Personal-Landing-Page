@@ -1304,6 +1304,50 @@
         emit({ isLive: false, nextSlot: null, chaturbateUrl: null });
       }
     })();
+
+    // Hero LIVE-state listener — react to schedule:state events.
+    // Toggles the hero's LIVE badge, the left lane card's eyebrow/pulse, and (later) the sticky bar accent.
+    (function heroLiveListener() {
+      const heroBadge = document.getElementById('hero-live-badge');
+      const lane = document.getElementById('lane-chaturbate');
+      const eyebrow = document.getElementById('lane-live-eyebrow');
+      const sub = document.getElementById('lane-live-sub');
+      if (!heroBadge || !lane || !eyebrow || !sub) return;
+
+      function fmtNext(state) {
+        if (!state || !state.nextSlot) return 'Schedule coming soon';
+        const when = new Date(state.nextSlot.startUtc);
+        const dtf = new Intl.DateTimeFormat('en-US', {
+          weekday: 'short', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+        });
+        return dtf.format(when);
+      }
+
+      window.addEventListener('schedule:state', (e) => {
+        const state = e.detail || {};
+        if (state.isLive) {
+          heroBadge.hidden = false;
+          lane.classList.add('is-live');
+          while (eyebrow.firstChild) eyebrow.removeChild(eyebrow.firstChild);
+          const pulse = document.createElement('span');
+          pulse.className = 'lane-pulse';
+          pulse.setAttribute('aria-hidden', 'true');
+          eyebrow.appendChild(pulse);
+          eyebrow.appendChild(document.createTextNode('LIVE NOW'));
+          sub.textContent = 'Streaming on Chaturbate right now';
+        } else {
+          heroBadge.hidden = true;
+          lane.classList.remove('is-live');
+          while (eyebrow.firstChild) eyebrow.removeChild(eyebrow.firstChild);
+          const pulse = document.createElement('span');
+          pulse.className = 'lane-pulse';
+          pulse.setAttribute('aria-hidden', 'true');
+          eyebrow.appendChild(pulse);
+          eyebrow.appendChild(document.createTextNode('NEXT STREAM'));
+          sub.textContent = fmtNext(state);
+        }
+      });
+    })();
   </script>
 
 </body>
