@@ -83,6 +83,25 @@
 
     a { color: inherit; }
 
+    /* SKIP LINK — keyboard-first a11y; visible only on focus */
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      transform: translateY(-150%);
+      z-index: 1000;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--violet-bright);
+      color: #0a0710;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.15s ease;
+    }
+    .skip-link:focus { transform: translateY(0); outline: none; }
+
     /* NAV */
     nav.topbar {
       position: fixed;
@@ -717,15 +736,22 @@
     }
     .modal-close {
       position: absolute;
-      top: 12px; right: 16px;
+      top: 8px; right: 8px;
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: none;
       border: none;
+      border-radius: 50%;
       color: var(--muted);
       font-size: 26px;
       cursor: pointer;
       line-height: 1;
+      transition: background 0.15s ease, color 0.15s ease;
     }
-    .modal-close:hover { color: var(--text); }
+    .modal-close:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
     .modal-close:focus-visible {
       outline: 2px solid var(--violet-bright);
       outline-offset: 2px;
@@ -792,10 +818,11 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border-top: 1px solid var(--border);
+      padding-bottom: env(safe-area-inset-bottom, 0);
     }
     @media (max-width: 640px) {
       .sticky-cta:not([hidden]) { display: grid; }
-      body.has-sticky-cta { padding-bottom: 64px; }
+      body.has-sticky-cta { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0)); }
     }
     .sticky-btn {
       display: inline-flex;
@@ -835,7 +862,7 @@
     .reveal {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
     .reveal.in-view {
       opacity: 1;
@@ -857,18 +884,26 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
       }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
 </head>
 <body>
 
+  <a class="skip-link" href="#main">Skip to main content</a>
+
   <nav class="topbar">
-    <a href="#" class="brand"><span class="brand-dot"></span>KEITH</a>
+    <a href="/" class="brand"><span class="brand-dot"></span>KEITH</a>
     <a href="#follow" class="cta-btn cta-ghost">Follow ↓</a>
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" id="main" tabindex="-1">
     <div class="hero-avatar-wrap">
       <img class="hero-avatar" src="images/profile.webp" srcset="images/profile.webp 1x, images/profile@2x.webp 2x" width="180" height="180" alt="Keith" />
       <span class="live-badge" id="hero-live-badge" hidden aria-label="Currently live"><span class="live-dot" aria-hidden="true"></span>LIVE</span>
