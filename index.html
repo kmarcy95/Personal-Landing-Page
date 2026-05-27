@@ -349,6 +349,90 @@
       line-height: 1.5;
     }
 
+    /* SCHEDULE */
+    .schedule-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    @media (min-width: 720px) {
+      .schedule-wrap {
+        grid-template-columns: minmax(0, 360px) 1fr;
+        align-items: stretch;
+      }
+    }
+    .schedule-next {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 24px 26px;
+      border-radius: 18px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+    .schedule-next-eyebrow {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .schedule-next.is-live .schedule-next-eyebrow,
+    .schedule-next.is-live .schedule-next-eyebrow a {
+      color: #ff2c5a;
+    }
+    .schedule-next-eyebrow a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .schedule-next-when {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+    .schedule-next-local {
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+    .schedule-week {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .schedule-day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 4px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .schedule-day.is-today {
+      border-color: var(--violet);
+      background: rgba(122, 77, 255, 0.08);
+    }
+    .schedule-day-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .schedule-day-time {
+      font-size: 12.5px;
+      color: var(--violet-bright);
+      font-weight: 600;
+    }
+    .schedule-day.is-off .schedule-day-time {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
     /* CONTENT GRID */
     .content-grid {
       display: grid;
@@ -708,6 +792,20 @@
     </nav>
   </section>
 
+  <!-- SCHEDULE -->
+  <section class="section section-schedule" id="schedule" aria-labelledby="schedule-heading" hidden>
+    <div class="section-eyebrow reveal">Stream Schedule</div>
+    <h2 class="section-title reveal" id="schedule-heading">When I'm Live</h2>
+    <div class="schedule-wrap reveal">
+      <div class="schedule-next" id="schedule-next">
+        <span class="schedule-next-eyebrow" id="schedule-next-eyebrow">NEXT STREAM</span>
+        <span class="schedule-next-when" id="schedule-next-when">—</span>
+        <span class="schedule-next-local" id="schedule-next-local"></span>
+      </div>
+      <div class="schedule-week" id="schedule-week" aria-label="Weekly schedule"></div>
+    </div>
+  </section>
+
   <!-- EXCLUSIVE CONTENT -->
   <section class="section" aria-labelledby="exclusive-heading">
     <div class="section-eyebrow reveal">Exclusive Content</div>
@@ -991,6 +1089,219 @@
         }
       } catch (err) {
         console.warn('Bio load failed:', err);
+      }
+    })();
+
+    // Schedule IIFE — fetch schedule.json, compute live state + next slot, render, emit schedule:state event.
+    (async function loadSchedule() {
+      const section = document.getElementById('schedule');
+      const nextEl = document.getElementById('schedule-next');
+      const nextEyebrow = document.getElementById('schedule-next-eyebrow');
+      const nextWhen = document.getElementById('schedule-next-when');
+      const nextLocal = document.getElementById('schedule-next-local');
+      const weekEl = document.getElementById('schedule-week');
+      if (!section || !nextEl || !nextEyebrow || !nextWhen || !nextLocal || !weekEl) return;
+
+      const DAYS_ORDER = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const DAY_TO_INDEX = { Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6, Sun:0 };
+
+      function parseHM(s) {
+        const m = String(s || '').match(/^(\d{1,2}):(\d{2})$/);
+        if (!m) return null;
+        const h = parseInt(m[1], 10), min = parseInt(m[2], 10);
+        if (h < 0 || h > 23 || min < 0 || min > 59) return null;
+        return { h, m: min };
+      }
+
+      function slotToUtcRange(slot, tz, anchorDate) {
+        const start = parseHM(slot.start);
+        const end = parseHM(slot.end);
+        if (!start || !end) return null;
+        const wraps = (end.h < start.h) || (end.h === start.h && end.m <= start.m);
+        const startUtc = tzWallTimeToUtcMs(anchorDate, start.h, start.m, tz);
+        const endAnchor = wraps ? addDays(anchorDate, 1) : anchorDate;
+        const endUtc = tzWallTimeToUtcMs(endAnchor, end.h, end.m, tz);
+        return { startUtc, endUtc };
+      }
+
+      function tzWallTimeToUtcMs(dateInTz, hour, minute, tz) {
+        const y = dateInTz.year, mo = dateInTz.month, d = dateInTz.day;
+        const utcGuess = Date.UTC(y, mo - 1, d, hour, minute, 0);
+        const offsetMs = tzOffsetMs(utcGuess, tz);
+        return utcGuess - offsetMs;
+      }
+
+      function tzOffsetMs(utcMs, tz) {
+        const dtf = new Intl.DateTimeFormat('en-US', {
+          timeZone: tz, hour12: false,
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+        const parts = dtf.formatToParts(new Date(utcMs));
+        const get = (t) => parseInt(parts.find(p => p.type === t).value, 10);
+        const localAsUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour') === 24 ? 0 : get('hour'), get('minute'), get('second'));
+        return localAsUtc - utcMs;
+      }
+
+      function dateInTz(utcMs, tz) {
+        const dtf = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
+        const parts = dtf.formatToParts(new Date(utcMs));
+        return {
+          year: parseInt(parts.find(p => p.type === 'year').value, 10),
+          month: parseInt(parts.find(p => p.type === 'month').value, 10),
+          day: parseInt(parts.find(p => p.type === 'day').value, 10),
+        };
+      }
+
+      function addDays(d, n) {
+        const js = new Date(Date.UTC(d.year, d.month - 1, d.day));
+        js.setUTCDate(js.getUTCDate() + n);
+        return { year: js.getUTCFullYear(), month: js.getUTCMonth() + 1, day: js.getUTCDate() };
+      }
+
+      function isoDate(d) {
+        return d.year + '-' + String(d.month).padStart(2, '0') + '-' + String(d.day).padStart(2, '0');
+      }
+
+      function findCurrentAndNext(schedule, nowMs) {
+        const tz = schedule.tz || 'America/Chicago';
+        const slots = Array.isArray(schedule.slots) ? schedule.slots : [];
+        const overrides = Array.isArray(schedule.overrides) ? schedule.overrides : [];
+        const offDates = new Set(overrides.filter(o => o && o.off).map(o => o.date));
+        const today = dateInTz(nowMs, tz);
+
+        const instances = [];
+        for (let dayOffset = -1; dayOffset <= 8; dayOffset++) {
+          const anchor = addDays(today, dayOffset);
+          if (offDates.has(isoDate(anchor))) continue;
+          const anchorJs = new Date(Date.UTC(anchor.year, anchor.month - 1, anchor.day));
+          const dow = anchorJs.getUTCDay();
+          for (const slot of slots) {
+            const slotDow = DAY_TO_INDEX[slot.day];
+            if (slotDow === undefined || slotDow !== dow) continue;
+            const range = slotToUtcRange(slot, tz, anchor);
+            if (!range) continue;
+            instances.push({ slot, anchor, ...range });
+          }
+        }
+
+        instances.sort((a, b) => a.startUtc - b.startUtc);
+
+        let current = null;
+        let next = null;
+        for (const inst of instances) {
+          if (nowMs >= inst.startUtc && nowMs < inst.endUtc) { current = inst; }
+          if (inst.startUtc > nowMs && !next) { next = inst; }
+        }
+        return { current, next, tz };
+      }
+
+      function renderWeek(schedule, todayInTz) {
+        const slots = Array.isArray(schedule.slots) ? schedule.slots : [];
+        const todayJs = new Date(Date.UTC(todayInTz.year, todayInTz.month - 1, todayInTz.day));
+        const todayDow = todayJs.getUTCDay();
+        const byDay = {};
+        for (const s of slots) {
+          if (!s || !s.day) continue;
+          if (!byDay[s.day]) byDay[s.day] = [];
+          byDay[s.day].push(s);
+        }
+        while (weekEl.firstChild) weekEl.removeChild(weekEl.firstChild);
+        for (const d of DAYS_ORDER) {
+          const chip = document.createElement('div');
+          chip.className = 'schedule-day';
+          if (DAY_TO_INDEX[d] === todayDow) chip.classList.add('is-today');
+
+          const name = document.createElement('span');
+          name.className = 'schedule-day-name';
+          name.textContent = d;
+          chip.appendChild(name);
+
+          const time = document.createElement('span');
+          time.className = 'schedule-day-time';
+          const list = byDay[d];
+          if (list && list.length > 0) {
+            const first = list[0];
+            const label = first.start + (list.length > 1 ? ' +' + (list.length - 1) : '');
+            time.textContent = label;
+          } else {
+            chip.classList.add('is-off');
+            time.textContent = 'Off';
+          }
+          chip.appendChild(time);
+          weekEl.appendChild(chip);
+        }
+      }
+
+      function formatNextWhen(inst, tz) {
+        const dtf = new Intl.DateTimeFormat('en-US', {
+          timeZone: tz, weekday: 'long', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+        });
+        return dtf.format(new Date(inst.startUtc));
+      }
+
+      function formatLocalDelta(inst) {
+        const dtf = new Intl.DateTimeFormat('en-US', {
+          weekday: 'long', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+        });
+        const local = dtf.format(new Date(inst.startUtc));
+        const days = Math.round((inst.startUtc - Date.now()) / 86400000);
+        const rel = days <= 0 ? 'today' : (days === 1 ? 'tomorrow' : 'in ' + days + ' days');
+        return 'Your time: ' + local + ' (' + rel + ')';
+      }
+
+      function emit(state) {
+        window.dispatchEvent(new CustomEvent('schedule:state', { detail: state }));
+      }
+
+      try {
+        const res = await fetch('/schedule.json', { cache: 'no-cache' });
+        if (!res.ok) { emit({ isLive: false, nextSlot: null, chaturbateUrl: null }); return; }
+        const schedule = await res.json();
+        if (!schedule || !Array.isArray(schedule.slots) || schedule.slots.length === 0) {
+          emit({ isLive: false, nextSlot: null, chaturbateUrl: null });
+          return;
+        }
+
+        const tz = schedule.tz || 'America/Chicago';
+        const now = Date.now();
+        const todayInTz = dateInTz(now, tz);
+        const { current, next } = findCurrentAndNext(schedule, now);
+
+        if (current) {
+          nextEl.classList.add('is-live');
+          const liveLink = document.createElement('a');
+          liveLink.href = 'https://chaturbate.com/brad_larck199';
+          liveLink.target = '_blank';
+          liveLink.rel = 'noopener';
+          liveLink.textContent = 'LIVE NOW → Watch on Chaturbate';
+          nextEyebrow.textContent = '';
+          nextEyebrow.appendChild(liveLink);
+          nextWhen.textContent = 'Streaming right now';
+          nextLocal.textContent = '';
+        } else if (next) {
+          nextEl.classList.remove('is-live');
+          nextEyebrow.textContent = 'NEXT STREAM';
+          nextWhen.textContent = formatNextWhen(next, tz);
+          nextLocal.textContent = formatLocalDelta(next);
+        } else {
+          nextEl.classList.remove('is-live');
+          nextEyebrow.textContent = 'SCHEDULE';
+          nextWhen.textContent = 'Check back soon';
+          nextLocal.textContent = '';
+        }
+
+        renderWeek(schedule, todayInTz);
+        section.hidden = false;
+
+        emit({
+          isLive: !!current,
+          nextSlot: next ? { startUtc: next.startUtc, day: next.slot.day, start: next.slot.start } : null,
+          chaturbateUrl: 'https://chaturbate.com/brad_larck199'
+        });
+      } catch (err) {
+        console.warn('Schedule load failed:', err);
+        emit({ isLive: false, nextSlot: null, chaturbateUrl: null });
       }
     })();
   </script>
