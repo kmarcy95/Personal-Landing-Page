@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#060608" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Instagram Planner — Private</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23a06bff'/%3E%3Cstop offset='1' stop-color='%237a4dff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='28' fill='url(%23g)'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #060608;
+      --bg-soft: #0d0b14;
+      --violet: #7a4dff;
+      --violet-bright: #a06bff;
+      --violet-glow: rgba(140, 90, 255, 0.35);
+      --text: #f4f1ff;
+      --muted: #9b96b4;
+      --card: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.08);
+      --reel: #ff8fa3;
+      --photo: #c0a8ff;
+      --carousel: #5fd0e0;
+      --story: #ffcf6b;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100%;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(122, 77, 255, 0.14), transparent 55%),
+        radial-gradient(ellipse at 80% 100%, rgba(160, 107, 255, 0.08), transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(ellipse at 50% 20%, rgba(0, 0, 0, 0.6), transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 20%, rgba(0, 0, 0, 0.6), transparent 75%);
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* HEADER */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .back-link:hover { color: var(--text); border-color: var(--violet); background: rgba(122, 77, 255, 0.1); }
+    .back-link:focus-visible { outline: 2px solid var(--violet-bright); outline-offset: 2px; }
+
+    .head-titles { margin: 18px 0 26px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--violet-bright);
+      margin-bottom: 10px;
+    }
+    .eyebrow .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--violet-bright);
+      box-shadow: 0 0 12px var(--violet-glow);
+    }
+    h1 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(34px, 7vw, 60px);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffffff 0%, #b9a8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .privacy {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 560px;
+    }
+    .privacy strong { color: var(--text); font-weight: 600; }
+
+    /* WEEK GRID */
+    .week {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    @media (min-width: 760px) {
+      .week { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+    }
+
+    .day {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    }
+    .day:hover { border-color: var(--violet); background: rgba(122, 77, 255, 0.08); }
+    .day:focus-visible { outline: 2px solid var(--violet-bright); outline-offset: 2px; }
+    .day.is-today { border-color: rgba(160, 107, 255, 0.55); }
+    .day.is-selected {
+      border-color: var(--violet-bright);
+      background: rgba(122, 77, 255, 0.14);
+      box-shadow: 0 0 0 1px var(--violet-bright) inset;
+    }
+    @media (min-width: 760px) {
+      .day {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        min-height: 132px;
+        text-align: center;
+      }
+    }
+
+    .day-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex: 0 0 42px;
+    }
+    .day.is-today .day-name { color: var(--violet-bright); }
+    @media (min-width: 760px) { .day-name { flex: none; } }
+
+    .day-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: flex-start;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    @media (min-width: 760px) { .day-body { align-items: center; justify-content: center; flex: 1 1 auto; } }
+
+    .day-time {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .chip {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+    }
+    .chip.reel { color: var(--reel); }
+    .chip.photo { color: var(--photo); }
+    .chip.carousel { color: var(--carousel); }
+    .chip.story { color: var(--story); }
+    .day-note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    @media (min-width: 760px) { .day-note { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; } }
+    .day-off {
+      font-size: 13px;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    /* EDITOR */
+    .editor {
+      padding: 24px 22px;
+      border-radius: 18px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+    }
+    .editor-title {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 18px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .editor-hint { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 620px) {
+      .fields { grid-template-columns: 140px 160px 1fr; align-items: end; }
+    }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 11px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font: inherit;
+      font-size: 15px;
+    }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: var(--violet-bright);
+      box-shadow: 0 0 0 3px rgba(122, 77, 255, 0.25);
+    }
+    .field select { cursor: pointer; }
+    .field input[type="time"] { color-scheme: dark; }
+
+    .editor-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--violet-bright); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--violet), var(--violet-bright));
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.92; }
+    .btn-ghost:hover { border-color: var(--violet); background: rgba(122, 77, 255, 0.1); }
+    .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+    .saved-flash {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--carousel);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .saved-flash.show { opacity: 1; }
+
+    .clear-week-row { margin-top: 28px; text-align: center; }
+    .clear-week {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+    .clear-week:hover { color: var(--reel); }
+    .clear-week:focus-visible { outline: 2px solid var(--violet-bright); outline-offset: 2px; }
+
+    /* STAT BAR (week at a glance + next post) */
+    .statbar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-bottom: 26px;
+      padding: 20px 22px;
+      border-radius: 18px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+    }
+    @media (min-width: 720px) { .statbar { grid-template-columns: 1.3fr 1fr; align-items: center; } }
+    .stat-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .next-main { font-family: 'Archivo Black', sans-serif; font-size: 19px; line-height: 1.2; }
+    .next-rel { font-size: 13.5px; color: var(--violet-bright); font-weight: 600; margin-top: 5px; min-height: 1em; }
+    .stat-right { border-top: 1px solid var(--border); padding-top: 16px; }
+    @media (min-width: 720px) { .stat-right { border-top: none; border-left: 1px solid var(--border); padding-top: 0; padding-left: 22px; } }
+    .counts { font-size: 13.5px; color: var(--muted); }
+    .counts strong { color: var(--text); font-weight: 700; }
+    .mix-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--card); margin: 12px 0 10px; }
+    .mix-seg { height: 100%; }
+    .mix-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+    .mix-leg { display: inline-flex; align-items: center; gap: 6px; }
+    .mix-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+    /* EDITOR RECOMMENDED HINT */
+    .editor-rec { font-size: 13px; color: var(--violet-bright); margin: -6px 0 16px; }
+
+    /* PANELS (best times + idea bank) */
+    .panels { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 26px; }
+    @media (min-width: 760px) { .panels { grid-template-columns: 1fr 1fr; align-items: start; } }
+    .panel { padding: 22px; border-radius: 18px; background: var(--card); border: 1px solid var(--border); }
+    .panel-title { font-family: 'Archivo Black', sans-serif; font-size: 16px; text-transform: uppercase; margin-bottom: 5px; }
+    .panel-sub { font-size: 12.5px; color: var(--muted); line-height: 1.45; margin-bottom: 16px; }
+
+    .bt-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+    .bt-row:last-child { border-bottom: none; }
+    .bt-day { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .bt-row.is-today .bt-day { color: var(--violet-bright); }
+    .bt-window { font-size: 13.5px; color: var(--text); text-align: right; }
+    .bt-tip { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+    .idea { display: block; width: 100%; text-align: left; padding: 11px 13px; margin-bottom: 8px; border-radius: 11px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); font: inherit; font-size: 13.5px; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
+    .idea:hover { border-color: var(--violet); background: rgba(122, 77, 255, 0.08); }
+    .idea:focus-visible { outline: 2px solid var(--violet-bright); outline-offset: 2px; }
+    .idea-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+    .idea-foot .btn { padding: 9px 16px; font-size: 13px; }
+    .idea-hint { font-size: 12px; color: var(--muted); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <div class="top">
+      <a class="back-link" href="/">← Back to site</a>
+    </div>
+
+    <div class="head-titles">
+      <span class="eyebrow"><span class="dot"></span>Private Planner</span>
+      <h1>Instagram Planner</h1>
+      <p class="privacy">Plan when you post each week. <strong>Saved on this device only</strong> — it never leaves your browser and fans can't see it. Clearing your browser data will erase it.</p>
+    </div>
+
+    <section class="statbar" aria-label="Week at a glance">
+      <div class="stat-block">
+        <div class="stat-label">Next post</div>
+        <div class="next-main" id="next-main">—</div>
+        <div class="next-rel" id="next-rel"></div>
+      </div>
+      <div class="stat-block stat-right">
+        <div class="stat-label">This week</div>
+        <div class="counts" id="counts">—</div>
+        <div class="mix-bar" id="mix-bar" aria-hidden="true"></div>
+        <div class="mix-legend" id="mix-legend"></div>
+      </div>
+    </section>
+
+    <section class="week" id="week" aria-label="Weekly posting plan"></section>
+
+    <section class="editor" aria-label="Edit day">
+      <h2 class="editor-title" id="editor-title">Pick a day to plan</h2>
+      <p class="editor-hint" id="editor-hint">Tap any day above to set a posting time, type, and note.</p>
+      <p class="editor-rec" id="editor-rec" hidden></p>
+
+      <div class="fields" id="fields" hidden>
+        <div class="field">
+          <label for="f-time">Time</label>
+          <input type="time" id="f-time" />
+        </div>
+        <div class="field">
+          <label for="f-type">Type</label>
+          <select id="f-type">
+            <option value="Reel">Reel</option>
+            <option value="Photo">Photo</option>
+            <option value="Carousel">Carousel</option>
+            <option value="Story">Story</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-note">Note</label>
+          <input type="text" id="f-note" maxlength="80" placeholder="e.g. gym set, Q&amp;A, teaser…" />
+        </div>
+      </div>
+
+      <div class="editor-actions" id="actions" hidden>
+        <button class="btn btn-primary" id="save">Save day</button>
+        <button class="btn btn-ghost" id="clear-day">Clear day</button>
+        <span class="saved-flash" id="flash" role="status" aria-live="polite"></span>
+      </div>
+
+      <div class="clear-week-row">
+        <button class="clear-week" id="clear-week" type="button">Clear whole week</button>
+      </div>
+    </section>
+
+    <section class="panels">
+      <div class="panel" aria-label="Best times to post">
+        <h2 class="panel-title">Best Times to Post</h2>
+        <p class="panel-sub">Starter benchmarks for your niche. Swap in your real numbers from Instagram → Professional dashboard → Total followers → Most active times.</p>
+        <div id="best-times"></div>
+        <p class="bt-tip" id="best-times-tip"></p>
+      </div>
+      <div class="panel" aria-label="Content ideas">
+        <h2 class="panel-title">Need an Idea?</h2>
+        <p class="panel-sub">On-brand prompts. Pick a day above, then tap an idea to drop it into that day's note — or tap to copy it.</p>
+        <div id="idea-list"></div>
+        <div class="idea-foot">
+          <button class="btn btn-ghost" id="shuffle" type="button">↻ New ideas</button>
+          <span class="idea-hint" id="idea-hint">Tap → copies to clipboard</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function planner() {
+      'use strict';
+
+      var STORAGE_KEY = 'ig_planner_v1';
+      var DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      var DAY_FULL = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
+      var JS_DAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      var TYPES = ['Reel', 'Photo', 'Carousel', 'Story'];
+      var TYPE_COLOR = { Reel: '#ff8fa3', Photo: '#c0a8ff', Carousel: '#5fd0e0', Story: '#ffcf6b' };
+
+      // Starter best-time windows by day (user's local clock) — swap with real Insights later.
+      var RECOMMENDED = {
+        Mon: '6–9 PM',
+        Tue: '7–9 PM',
+        Wed: '12–1 PM · 7–10 PM',
+        Thu: '7–10 PM',
+        Fri: '5–8 PM',
+        Sat: '10 AM–1 PM · 8–11 PM',
+        Sun: '9–11 AM · 7–10 PM'
+      };
+      var BEST_TIME_TIP = 'Reels tend to peak 9 AM–12 PM and 6–9 PM. Drop a Story around lunch and again late evening. Weeknights skew strongest for this niche — confirm with your own Insights.';
+
+      var IDEAS = [
+        'Mirror pump check — one cocky line, that’s it',
+        'Fit check Reel: gym shorts → going-out fit',
+        'POV: you caught me getting ready (shirt optional)',
+        'Pool day b-roll set to a trending sound',
+        '‘Rate the fit /10’ carousel — 4 looks',
+        'Morning routine Reel: coffee, no shirt, chaos',
+        'Q&A sticker on Story — answer the bold ones',
+        'Slow-mo of the best lift of the week',
+        'Day-in-the-life b-roll, captioned',
+        'Flex but make it a joke — gym bloopers',
+        'Outfit drop: comment what you’d steal',
+        'Golden-hour rooftop set',
+        'Meal-prep Reel, sleeves rolled up',
+        'Throwback vs now — the glow-up tease',
+        'Get-ready-with-me before a night out',
+        'Finish-this-line caption challenge'
+      ];
+
+      var weekEl = document.getElementById('week');
+      var titleEl = document.getElementById('editor-title');
+      var hintEl = document.getElementById('editor-hint');
+      var fieldsEl = document.getElementById('fields');
+      var actionsEl = document.getElementById('actions');
+      var fTime = document.getElementById('f-time');
+      var fType = document.getElementById('f-type');
+      var fNote = document.getElementById('f-note');
+      var saveBtn = document.getElementById('save');
+      var clearDayBtn = document.getElementById('clear-day');
+      var clearWeekBtn = document.getElementById('clear-week');
+      var flashEl = document.getElementById('flash');
+      var recEl = document.getElementById('editor-rec');
+      var nextMainEl = document.getElementById('next-main');
+      var nextRelEl = document.getElementById('next-rel');
+      var countsEl = document.getElementById('counts');
+      var mixBarEl = document.getElementById('mix-bar');
+      var mixLegendEl = document.getElementById('mix-legend');
+      var bestTimesEl = document.getElementById('best-times');
+      var bestTimesTipEl = document.getElementById('best-times-tip');
+      var ideaListEl = document.getElementById('idea-list');
+      var shuffleBtn = document.getElementById('shuffle');
+      var ideaHintEl = document.getElementById('idea-hint');
+
+      var todayKey = JS_DAY[new Date().getDay()];
+      var selected = null;
+      var flashTimer = null;
+
+      // --- state ---
+      function loadState() {
+        var state = {};
+        DAYS.forEach(function (d) { state[d] = null; });
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return state;
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            DAYS.forEach(function (d) {
+              var e = parsed[d];
+              if (e && typeof e === 'object' && typeof e.time === 'string' && /^\d{1,2}:\d{2}$/.test(e.time)) {
+                var type = TYPES.indexOf(e.type) >= 0 ? e.type : 'Reel';
+                var note = typeof e.note === 'string' ? e.note.slice(0, 80) : '';
+                state[d] = { time: e.time, type: type, note: note };
+              }
+            });
+          }
+        } catch (err) {
+          console.warn('Planner load failed:', err);
+        }
+        return state;
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (err) {
+          console.warn('Planner save failed:', err);
+        }
+      }
+
+      var state = loadState();
+
+      // --- helpers ---
+      function fmtTime(t) {
+        var m = /^(\d{1,2}):(\d{2})$/.exec(t || '');
+        if (!m) return '';
+        var h = parseInt(m[1], 10);
+        var min = m[2];
+        if (h < 0 || h > 23) return '';
+        var ap = h < 12 ? 'AM' : 'PM';
+        h = h % 12;
+        if (h === 0) h = 12;
+        return h + ':' + min + ' ' + ap;
+      }
+
+      function flash(msg) {
+        flashEl.textContent = msg;
+        flashEl.classList.add('show');
+        if (flashTimer) clearTimeout(flashTimer);
+        flashTimer = setTimeout(function () { flashEl.classList.remove('show'); }, 1800);
+      }
+
+      // --- render ---
+      function buildDay(dayKey) {
+        var entry = state[dayKey];
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'day';
+        btn.dataset.day = dayKey;
+        if (dayKey === todayKey) btn.classList.add('is-today');
+        if (dayKey === selected) btn.classList.add('is-selected');
+        btn.setAttribute('aria-pressed', dayKey === selected ? 'true' : 'false');
+
+        var name = document.createElement('span');
+        name.className = 'day-name';
+        name.textContent = dayKey + (dayKey === todayKey ? ' • today' : '');
+        btn.appendChild(name);
+
+        var body = document.createElement('span');
+        body.className = 'day-body';
+
+        if (entry) {
+          var time = document.createElement('span');
+          time.className = 'day-time';
+          time.textContent = fmtTime(entry.time);
+          body.appendChild(time);
+
+          var chip = document.createElement('span');
+          chip.className = 'chip ' + entry.type.toLowerCase();
+          chip.textContent = entry.type;
+          body.appendChild(chip);
+
+          if (entry.note) {
+            var note = document.createElement('span');
+            note.className = 'day-note';
+            note.textContent = entry.note;
+            body.appendChild(note);
+          }
+          btn.setAttribute('aria-label', DAY_FULL[dayKey] + ': ' + fmtTime(entry.time) + ', ' + entry.type + (entry.note ? ', ' + entry.note : ''));
+        } else {
+          var off = document.createElement('span');
+          off.className = 'day-off';
+          off.textContent = 'Off';
+          body.appendChild(off);
+          btn.setAttribute('aria-label', DAY_FULL[dayKey] + ': no post planned');
+        }
+
+        btn.appendChild(body);
+        return btn;
+      }
+
+      function renderWeek() {
+        while (weekEl.firstChild) weekEl.removeChild(weekEl.firstChild);
+        var frag = document.createDocumentFragment();
+        DAYS.forEach(function (d) { frag.appendChild(buildDay(d)); });
+        weekEl.appendChild(frag);
+      }
+
+      function renderEditor() {
+        if (!selected) {
+          titleEl.textContent = 'Pick a day to plan';
+          hintEl.textContent = 'Tap any day above to set a posting time, type, and note.';
+          recEl.hidden = true;
+          fieldsEl.hidden = true;
+          actionsEl.hidden = true;
+          updateIdeaHint();
+          return;
+        }
+        titleEl.textContent = 'Editing — ' + DAY_FULL[selected];
+        hintEl.textContent = 'Set a time and type, then Save. Leave a day empty to mark it Off.';
+        recEl.hidden = false;
+        recEl.textContent = '💡 Most active ' + DAY_FULL[selected] + ': ' + RECOMMENDED[selected];
+        fieldsEl.hidden = false;
+        actionsEl.hidden = false;
+
+        var entry = state[selected];
+        fTime.value = entry ? entry.time : '';
+        fType.value = entry ? entry.type : 'Reel';
+        fNote.value = entry ? entry.note : '';
+        updateSaveState();
+        updateIdeaHint();
+      }
+
+      function updateIdeaHint() {
+        ideaHintEl.textContent = selected ? ('Tap → adds to ' + selected + ' note') : 'Tap → copies to clipboard';
+      }
+
+      // Next planned post across the recurring week (user's local clock).
+      function computeNext() {
+        var now = new Date();
+        for (var off = 0; off <= 7; off++) {
+          var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + off);
+          var key = JS_DAY[d.getDay()];
+          var entry = state[key];
+          if (!entry) continue;
+          var hm = /^(\d{1,2}):(\d{2})$/.exec(entry.time);
+          if (!hm) continue;
+          var dt = new Date(d.getFullYear(), d.getMonth(), d.getDate(), parseInt(hm[1], 10), parseInt(hm[2], 10), 0, 0);
+          if (dt.getTime() > now.getTime()) return { key: key, entry: entry, dt: dt };
+        }
+        return null;
+      }
+
+      function relTime(dt) {
+        var ms = dt.getTime() - Date.now();
+        if (ms < 0) return '';
+        var mins = Math.round(ms / 60000);
+        if (mins < 60) return 'in ' + mins + ' min';
+        var hrs = Math.round(mins / 60);
+        if (hrs < 24) return 'in ' + hrs + 'h';
+        var days = Math.round(hrs / 24);
+        return days === 1 ? 'tomorrow' : 'in ' + days + ' days';
+      }
+
+      function renderStats() {
+        var plannedDays = DAYS.filter(function (d) { return state[d]; });
+        var planned = plannedDays.length;
+        var counts = { Reel: 0, Photo: 0, Carousel: 0, Story: 0 };
+        plannedDays.forEach(function (d) { counts[state[d].type]++; });
+
+        var nx = computeNext();
+        if (nx) {
+          nextMainEl.textContent = nx.entry.type + ' · ' + DAY_FULL[nx.key] + ' at ' + fmtTime(nx.entry.time);
+          nextRelEl.textContent = relTime(nx.dt);
+        } else {
+          nextMainEl.textContent = planned ? 'All set for the week' : 'No posts planned yet';
+          nextRelEl.textContent = planned ? '' : 'Tap a day to add one';
+        }
+
+        while (countsEl.firstChild) countsEl.removeChild(countsEl.firstChild);
+        var sP = document.createElement('strong'); sP.textContent = String(planned);
+        countsEl.appendChild(sP);
+        countsEl.appendChild(document.createTextNode(' planned · '));
+        var sO = document.createElement('strong'); sO.textContent = String(7 - planned);
+        countsEl.appendChild(sO);
+        countsEl.appendChild(document.createTextNode(' off'));
+
+        while (mixBarEl.firstChild) mixBarEl.removeChild(mixBarEl.firstChild);
+        TYPES.forEach(function (t) {
+          if (!counts[t]) return;
+          var seg = document.createElement('div');
+          seg.className = 'mix-seg';
+          seg.style.background = TYPE_COLOR[t];
+          seg.style.width = (counts[t] / planned * 100) + '%';
+          mixBarEl.appendChild(seg);
+        });
+
+        while (mixLegendEl.firstChild) mixLegendEl.removeChild(mixLegendEl.firstChild);
+        if (!planned) {
+          var none = document.createElement('span');
+          none.textContent = 'No posts yet';
+          mixLegendEl.appendChild(none);
+        } else {
+          TYPES.forEach(function (t) {
+            if (!counts[t]) return;
+            var leg = document.createElement('span'); leg.className = 'mix-leg';
+            var dot = document.createElement('span'); dot.className = 'mix-dot'; dot.style.background = TYPE_COLOR[t];
+            leg.appendChild(dot);
+            leg.appendChild(document.createTextNode(t + ' ' + counts[t]));
+            mixLegendEl.appendChild(leg);
+          });
+        }
+      }
+
+      function renderBestTimes() {
+        while (bestTimesEl.firstChild) bestTimesEl.removeChild(bestTimesEl.firstChild);
+        DAYS.forEach(function (d) {
+          var row = document.createElement('div');
+          row.className = 'bt-row' + (d === todayKey ? ' is-today' : '');
+          var day = document.createElement('span'); day.className = 'bt-day';
+          day.textContent = d + (d === todayKey ? ' • today' : '');
+          var win = document.createElement('span'); win.className = 'bt-window';
+          win.textContent = RECOMMENDED[d];
+          row.appendChild(day); row.appendChild(win);
+          bestTimesEl.appendChild(row);
+        });
+        bestTimesTipEl.textContent = BEST_TIME_TIP;
+      }
+
+      function renderIdeas() {
+        var pool = IDEAS.slice();
+        for (var i = pool.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+        }
+        var picks = pool.slice(0, 5);
+        while (ideaListEl.firstChild) ideaListEl.removeChild(ideaListEl.firstChild);
+        picks.forEach(function (text) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'idea';
+          b.textContent = text;
+          ideaListEl.appendChild(b);
+        });
+      }
+
+      function updateSaveState() {
+        saveBtn.disabled = !fTime.value;
+        clearDayBtn.disabled = !state[selected];
+      }
+
+      // --- events ---
+      weekEl.addEventListener('click', function (e) {
+        var btn = e.target.closest('.day');
+        if (!btn || !weekEl.contains(btn)) return;
+        selected = btn.dataset.day;
+        renderWeek();
+        renderEditor();
+        fTime.focus();
+      });
+
+      fTime.addEventListener('input', updateSaveState);
+
+      saveBtn.addEventListener('click', function () {
+        if (!selected || !fTime.value) return;
+        state[selected] = {
+          time: fTime.value,
+          type: TYPES.indexOf(fType.value) >= 0 ? fType.value : 'Reel',
+          note: fNote.value.slice(0, 80)
+        };
+        saveState();
+        renderWeek();
+        renderStats();
+        updateSaveState();
+        flash('Saved ✓');
+      });
+
+      clearDayBtn.addEventListener('click', function () {
+        if (!selected || !state[selected]) return;
+        state[selected] = null;
+        saveState();
+        fTime.value = '';
+        fType.value = 'Reel';
+        fNote.value = '';
+        renderWeek();
+        renderStats();
+        updateSaveState();
+        flash('Day cleared');
+      });
+
+      clearWeekBtn.addEventListener('click', function () {
+        var hasAny = DAYS.some(function (d) { return state[d]; });
+        if (!hasAny) { flash('Nothing to clear'); return; }
+        if (!window.confirm('Clear the entire week? This can’t be undone.')) return;
+        DAYS.forEach(function (d) { state[d] = null; });
+        saveState();
+        renderWeek();
+        renderEditor();
+        renderStats();
+        flash('Week cleared');
+      });
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            function () { flash('Copied ✓'); },
+            function () { flash('Couldn’t copy'); }
+          );
+        } else {
+          flash('Pick a day to use it');
+        }
+      }
+
+      ideaListEl.addEventListener('click', function (e) {
+        var b = e.target.closest('.idea');
+        if (!b || !ideaListEl.contains(b)) return;
+        var text = b.textContent;
+        if (selected) {
+          fNote.value = text.slice(0, 80);
+          fNote.focus();
+          flash('Added to ' + selected + ' note');
+        } else {
+          copyText(text);
+        }
+      });
+
+      shuffleBtn.addEventListener('click', renderIdeas);
+
+      // --- init ---
+      renderWeek();
+      renderEditor();
+      renderStats();
+      renderBestTimes();
+      renderIdeas();
+      setInterval(renderStats, 60000);
+    })();
+  </script>
+</body>
+</html>
