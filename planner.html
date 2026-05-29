@@ -326,7 +326,7 @@
     }
     .saved-flash.show { opacity: 1; }
 
-    .clear-week-row { margin-top: 28px; text-align: center; }
+    .clear-week-row { margin-top: 28px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .clear-week {
       background: none;
       border: none;
@@ -459,6 +459,7 @@
       </div>
 
       <div class="clear-week-row">
+        <button class="btn btn-ghost" id="load-suggested" type="button">✨ Load suggested week</button>
         <button class="clear-week" id="clear-week" type="button">Clear whole week</button>
       </div>
     </section>
@@ -503,7 +504,18 @@
         Sat: '10 AM–1 PM · 8–11 PM',
         Sun: '9–11 AM · 7–10 PM'
       };
-      var BEST_TIME_TIP = 'Reels tend to peak 9 AM–12 PM and 6–9 PM. Drop a Story around lunch and again late evening. Weeknights skew strongest for this niche — confirm with your own Insights.';
+      var BEST_TIME_TIP = 'Under ~100 followers, posting time barely matters — reach comes from Reels hitting non-followers, not your existing audience. Prioritize 5–7 posts/week, mostly Reels, with a strong 2-second hook. Fine-tune exact times once "Most active times" unlocks at 100 followers.';
+
+      // Reels-weighted growth cadence — loaded on demand via "Load suggested week".
+      var SUGGESTED = {
+        Mon: { time: '18:00', type: 'Reel', note: 'Gym/fit Reel — hook in first 2s' },
+        Tue: { time: '12:00', type: 'Story', note: 'Q&A or poll sticker' },
+        Wed: { time: '19:00', type: 'Reel', note: 'Trending-audio Reel' },
+        Thu: { time: '19:00', type: 'Photo', note: 'Fit check / portrait' },
+        Fri: { time: '20:00', type: 'Reel', note: 'Going-out / fun Reel' },
+        Sat: { time: '11:00', type: 'Carousel', note: 'Rate-the-fit carousel' },
+        Sun: { time: '19:00', type: 'Reel', note: 'Day-in-the-life b-roll Reel' }
+      };
 
       var IDEAS = [
         'Mirror pump check — one cocky line, that’s it',
@@ -535,6 +547,7 @@
       var saveBtn = document.getElementById('save');
       var clearDayBtn = document.getElementById('clear-day');
       var clearWeekBtn = document.getElementById('clear-week');
+      var loadSuggestedBtn = document.getElementById('load-suggested');
       var flashEl = document.getElementById('flash');
       var recEl = document.getElementById('editor-rec');
       var nextMainEl = document.getElementById('next-main');
@@ -881,6 +894,20 @@
       });
 
       shuffleBtn.addEventListener('click', renderIdeas);
+
+      loadSuggestedBtn.addEventListener('click', function () {
+        var hasAny = DAYS.some(function (d) { return state[d]; });
+        if (hasAny && !window.confirm('Replace your current week with the suggested Reels-weighted growth plan?')) return;
+        DAYS.forEach(function (d) {
+          var s = SUGGESTED[d];
+          state[d] = s ? { time: s.time, type: s.type, note: s.note } : null;
+        });
+        saveState();
+        renderWeek();
+        renderStats();
+        if (selected) renderEditor();
+        flash('Loaded suggested week');
+      });
 
       // --- init ---
       renderWeek();
