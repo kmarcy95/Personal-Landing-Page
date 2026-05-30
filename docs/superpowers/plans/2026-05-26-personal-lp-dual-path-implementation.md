@@ -454,17 +454,17 @@ Replace with:
 Also update the OG/Twitter image tags (still pointing at the deleted PNG):
 
 ```html
-  <meta property="og:image" content="https://keith-links-995.netlify.app/images/profile.png" />
+  <meta property="og:image" content="https://keith-links-995.pages.dev/images/profile.png" />
   ...
-  <meta name="twitter:image" content="https://keith-links-995.netlify.app/images/profile.png" />
+  <meta name="twitter:image" content="https://keith-links-995.pages.dev/images/profile.png" />
 ```
 
 For now, repoint to the WebP (Task 5 will replace with a purpose-built OG card):
 
 ```html
-  <meta property="og:image" content="https://keith-links-995.netlify.app/images/profile.webp" />
+  <meta property="og:image" content="https://keith-links-995.pages.dev/images/profile.webp" />
   ...
-  <meta name="twitter:image" content="https://keith-links-995.netlify.app/images/profile.webp" />
+  <meta name="twitter:image" content="https://keith-links-995.pages.dev/images/profile.webp" />
 ```
 
 - [ ] **Step 5: Verify in browser**
@@ -683,7 +683,7 @@ $g.DrawString('Watch live * Unlock the library * Real moments', $taglineFont, $t
 # Domain footer
 $domainFont = New-Object System.Drawing.Font 'Segoe UI', 22, ([System.Drawing.FontStyle]::Bold)
 $domainBrush = New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb(255, 160, 107, 255))
-$g.DrawString('keith-links-995.netlify.app', $domainFont, $domainBrush, 92, 520)
+$g.DrawString('keith-links-995.pages.dev', $domainFont, $domainBrush, 92, 520)
 
 # Save
 $bmp.Save($outPath, [System.Drawing.Imaging.ImageFormat]::Png)
@@ -705,13 +705,13 @@ Expected: `Wrote C:\Users\keyst\Personal-Landing-Page\images\og.png`. Open the f
 In `C:\Users\keyst\Personal-Landing-Page\index.html`, find:
 
 ```html
-  <meta property="og:image" content="https://keith-links-995.netlify.app/images/profile.webp" />
+  <meta property="og:image" content="https://keith-links-995.pages.dev/images/profile.webp" />
 ```
 
 Replace with:
 
 ```html
-  <meta property="og:image" content="https://keith-links-995.netlify.app/images/og.png" />
+  <meta property="og:image" content="https://keith-links-995.pages.dev/images/og.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
 ```
@@ -719,13 +719,13 @@ Replace with:
 Then find:
 
 ```html
-  <meta name="twitter:image" content="https://keith-links-995.netlify.app/images/profile.webp" />
+  <meta name="twitter:image" content="https://keith-links-995.pages.dev/images/profile.webp" />
 ```
 
 Replace with:
 
 ```html
-  <meta name="twitter:image" content="https://keith-links-995.netlify.app/images/og.png" />
+  <meta name="twitter:image" content="https://keith-links-995.pages.dev/images/og.png" />
 ```
 
 - [ ] **Step 4: Verify**
@@ -1846,14 +1846,14 @@ git -c commit.gpgsign=false commit -m "Add sticky mobile CTA bar (split: Watch l
 In `C:\Users\keyst\Personal-Landing-Page\index.html`, find the line with `<title>Keith — Links</title>`. IMMEDIATELY AFTER it, insert:
 
 ```html
-  <link rel="canonical" href="https://keith-links-995.netlify.app/" />
+  <link rel="canonical" href="https://keith-links-995.pages.dev/" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Keith",
-    "url": "https://keith-links-995.netlify.app/",
-    "image": "https://keith-links-995.netlify.app/images/profile.webp",
+    "url": "https://keith-links-995.pages.dev/",
+    "image": "https://keith-links-995.pages.dev/images/profile.webp",
     "sameAs": [
       "https://chaturbate.com/brad_larck199",
       "https://onlyfans.com/keithbarron199",
@@ -1874,7 +1874,7 @@ Write `C:\Users\keyst\Personal-Landing-Page\sitemap.xml`:
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://keith-links-995.netlify.app/</loc>
+    <loc>https://keith-links-995.pages.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -1889,7 +1889,7 @@ Write `C:\Users\keyst\Personal-Landing-Page\robots.txt`:
 User-agent: *
 Allow: /
 
-Sitemap: https://keith-links-995.netlify.app/sitemap.xml
+Sitemap: https://keith-links-995.pages.dev/sitemap.xml
 ```
 
 - [ ] **Step 4: Verify**
@@ -1968,7 +1968,7 @@ Move-Item C:\Users\keyst\_deploy-stash\tools C:\Users\keyst\Personal-Landing-Pag
 
 - [ ] **Step 5: Production smoke test**
 
-Open https://keith-links-995.netlify.app/ in an incognito window. Re-walk the smoke-test checklist from Step 1. Test the OG share preview by pasting the URL into:
+Open https://keith-links-995.pages.dev/ in an incognito window. Re-walk the smoke-test checklist from Step 1. Test the OG share preview by pasting the URL into:
 - Twitter Card Validator: https://cards-dev.twitter.com/validator
 - Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/
 

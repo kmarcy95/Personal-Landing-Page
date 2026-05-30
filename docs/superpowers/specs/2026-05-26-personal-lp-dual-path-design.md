@@ -1,7 +1,7 @@
 # Personal Landing Page — Dual-Path Conversion & Premium Pass — Design
 
 **Date:** 2026-05-26
-**Project:** Personal-Landing-Page (https://keith-links-995.netlify.app/)
+**Project:** Personal-Landing-Page (https://keith-links-995.pages.dev/)
 **Status:** Approved by user in brainstorming, ready for implementation planning
 **Builds on:** [2026-05-16-exclusive-gallery-and-animations-design.md](./2026-05-16-exclusive-gallery-and-animations-design.md), [2026-05-17-paywall-modal-and-video-uploads-design.md](./2026-05-17-paywall-modal-and-video-uploads-design.md). Both remain in effect; this round changes the hero, adds two new sections, swaps in real assets, and adds a sticky mobile CTA.
 
@@ -16,7 +16,7 @@ Equal-lane treatment for OnlyFans + Chaturbate is the design's organizing constr
 
 - **No real payment processing.** The "Unlock" modal continues to send visitors to OnlyFans. Stripe / Cloudinary / signed URLs remain deferred to a future round.
 - **No theme or palette overhaul.** Dark `#060608` background, violet `#7a4dff`/`#a06bff` accents, and Inter + Archivo Black fonts stay.
-- **No custom domain.** `keith-links-995.netlify.app` is the canonical URL.
+- **No custom domain.** `keith-links-995.pages.dev` is the canonical URL.
 - **No Netlify Identity setup.** That remains the user's manual action. CMS scaffolding for the new content collections ships now and starts working once Identity is enabled.
 - **No real-time Chaturbate API integration.** Live/offline state is inferred from the schedule, not probed live.
 - **No JavaScript framework or build step.** Single-file vanilla HTML with three IIFEs, DOM-method rendering (no `innerHTML` on dynamic data) — the existing conventions hold.
@@ -218,7 +218,7 @@ If the array is empty, the entire section hides itself (the IIFE never appends t
 - Keeps the dark/violet brand.
 
 **SEO additions:**
-- `<link rel="canonical" href="https://keith-links-995.netlify.app/">` in `<head>`.
+- `<link rel="canonical" href="https://keith-links-995.pages.dev/">` in `<head>`.
 - JSON-LD `Person` schema in `<head>` (name, url, image, sameAs links to X / Instagram / OnlyFans / Chaturbate).
 - `sitemap.xml` at root listing the single canonical URL.
 - `robots.txt` allowing all crawlers (page is intentionally public; honest about that).

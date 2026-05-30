@@ -53,7 +53,7 @@ $g.DrawString('Watch live * Unlock the library * Real moments', $taglineFont, $t
 # Domain footer
 $domainFont = New-Object System.Drawing.Font 'Segoe UI', 22, ([System.Drawing.FontStyle]::Bold)
 $domainBrush = New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb(255, 160, 107, 255))
-$g.DrawString('keith-links-995.netlify.app', $domainFont, $domainBrush, 92, 520)
+$g.DrawString('keith-links-995.pages.dev', $domainFont, $domainBrush, 92, 520)
 
 # Save
 $bmp.Save($outPath, [System.Drawing.Imaging.ImageFormat]::Png)

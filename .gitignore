@@ -10,3 +10,7 @@ Thumbs.db
 
 # Local-only image sources (do not publish originals)
 _image-sources/
+
+# Local vector DB / scratch artifacts (never publish)
+*.db
+ruvector.db
