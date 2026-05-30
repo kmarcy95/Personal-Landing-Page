@@ -1076,7 +1076,7 @@
   <a class="skip-link" href="#main">Skip to main content</a>
 
   <nav class="topbar">
-    <a href="/" class="brand"><span class="brand-dot"></span>KEITH</a>
+    <a href="./" class="brand"><span class="brand-dot"></span>KEITH</a>
     <a href="#follow" class="cta-btn cta-ghost">Follow ↓</a>
   </nav>
 
@@ -1278,7 +1278,7 @@
       const VIDEO_EXTS = /\.(mp4|webm)(\?|$)/i;
 
       try {
-        const res = await fetch('/gallery.json', { cache: 'no-cache' });
+        const res = await fetch('gallery.json', { cache: 'no-cache' });
         if (!res.ok) throw new Error('gallery.json HTTP ' + res.status);
         const data = await res.json();
         galleryItems = Array.isArray(data.items) ? data.items : [];
@@ -1450,7 +1450,7 @@
       const taglineEl = document.getElementById('hero-tagline');
       if (!subtitleEl || !taglineEl) return;
       try {
-        const res = await fetch('/bio.json', { cache: 'no-cache' });
+        const res = await fetch('bio.json', { cache: 'no-cache' });
         if (!res.ok) return;
         const data = await res.json();
         if (data && typeof data.subtitle === 'string' && data.subtitle.trim()) {
@@ -1632,7 +1632,7 @@
       }
 
       try {
-        const res = await fetch('/schedule.json', { cache: 'no-cache' });
+        const res = await fetch('schedule.json', { cache: 'no-cache' });
         if (!res.ok) {
           section.dataset.state = 'failed';
           emit({ isLive: false, nextSlot: null, chaturbateUrl: null });
@@ -1738,7 +1738,7 @@
       const grid = document.getElementById('testimonials-grid');
       if (!section || !grid) return;
       try {
-        const res = await fetch('/testimonials.json', { cache: 'no-cache' });
+        const res = await fetch('testimonials.json', { cache: 'no-cache' });
         if (!res.ok) return;
         const data = await res.json();
         const items = Array.isArray(data && data.items) ? data.items : [];
